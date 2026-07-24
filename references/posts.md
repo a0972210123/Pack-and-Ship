@@ -102,3 +102,9 @@ Return a `posts.md` with one clearly-labeled section per requested platform (and
 language), ready to copy-paste, plus a one-line note on which asset to attach to each.
 Include the **YouTube description** section whenever there's a demo video — it's the one
 "post" that keeps working long after launch day.
+
+Keep each section as an explicit **`{ caption, platform, asset(s), notes }`** unit — one post,
+its copy, the file(s) it attaches, and how to use it. That's both what a novice needs to act
+without guessing and the exact interface a future automated posting agent consumes. When you
+hand assets to the user, deliver the real files as downloads (collected in one batch), not
+inline previews — you don't know if they're on desktop or mobile.

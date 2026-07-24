@@ -135,6 +135,20 @@ not a fixed template — adapt it or replace it. Likewise fill `assets.social.mo
 the skill's own output (labels/values/tooltip copy) so the social card demonstrates the real
 thing. (Carousel and thumbnail render from config only — no demo page needed.)
 
+## Deliver ready-to-ship assets (don't leave them scattered as previews)
+
+You don't know whether the user is on desktop or mobile — and an **inline preview is not a
+downloadable file on mobile**. So when assets are ready to ship:
+
+- **Hand over the real files as downloads**, not inline previews. Collect them from `dist/` and
+  deliver them in **one batch per set** (all carousel slides together, the chosen reel, the
+  thumbnails) so nothing is scattered across the conversation for the user to hunt down.
+- **Pair every asset with its copy + a short how-to** in the chat: the ready-to-paste caption,
+  the post order (carousel 01→05), the aspect ratio, and what attaches where. A first-time user
+  should be able to act without reverse-engineering anything.
+- Keep that **asset ↔ copy ↔ platform** pairing structured and explicit — it's the same shape a
+  future automated posting agent consumes: each post = `{ assets[], caption, platform, notes }`.
+
 ## Optional — write launch posts
 
 When asked, write platform-tailored launch posts following `references/posts.md`
