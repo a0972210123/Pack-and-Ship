@@ -1,0 +1,39 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
+  *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,'Segoe UI',system-ui,sans-serif}
+  body{width:1280px;height:720px;overflow:hidden;color:#f4f4f7;position:relative;
+    background:radial-gradient(120% 130% at 78% 12%,var(--a2,#2b2350) 0%,#141019 44%,#08070c 100%)}
+  .glow{position:absolute;width:720px;height:720px;left:-220px;bottom:-240px;border-radius:50%;
+    background:radial-gradient(circle,var(--glow,rgba(167,139,250,.26)),transparent 60%)}
+  .wrap{position:relative;padding:74px 80px;height:100%;display:flex;flex-direction:column;justify-content:center;max-width:1000px}
+  .kick{display:inline-flex;align-items:center;gap:16px;font-size:24px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--a,#a78bfa);margin-bottom:30px}
+  .kick .d{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,var(--a,#a78bfa),var(--ad,#7c3aed));display:grid;place-items:center;color:#fff;font-size:1.9rem}
+  h1{font-size:120px;line-height:.98;font-weight:900;letter-spacing:-.03em;text-shadow:0 6px 40px rgba(0,0,0,.5)}
+  h1 .g{background:linear-gradient(135deg,var(--a,#c4b5fd),var(--ad,#7c3aed));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .badge{margin-top:38px;align-self:flex-start;font-size:30px;font-weight:850;letter-spacing:.04em;padding:16px 30px;border-radius:16px;
+    background:linear-gradient(135deg,var(--gold,#fbbf24),var(--goldd,#d97706));color:#3a1d03}
+  .play{position:absolute;right:74px;bottom:64px;width:150px;height:150px;border-radius:50%;
+    background:rgba(255,255,255,.14);border:4px solid rgba(255,255,255,.85);backdrop-filter:blur(6px);display:grid;place-items:center}
+  .play::after{content:'';margin-left:14px;border-style:solid;border-width:38px 0 38px 62px;border-color:transparent transparent transparent #fff}
+</style></head><body>
+  <div class="glow"></div>
+  <div class="wrap">
+    <div class="kick"><span class="d" id="emoji">◑</span> <span id="brand">Skill</span></div>
+    <h1 id="h1"></h1>
+    <div class="badge" id="badge" style="display:none"></div>
+  </div>
+  <div class="play"></div>
+<script>
+  const c = window.__CFG || {};
+  const r = document.documentElement.style;
+  if (c.accent) r.setProperty('--a', c.accent);
+  if (c.accentDark) r.setProperty('--ad', c.accentDark);
+  if (c.gold) r.setProperty('--gold', c.gold);
+  if (c.goldDark) r.setProperty('--goldd', c.goldDark);
+  document.getElementById('emoji').textContent = c.emoji || '◑';
+  document.getElementById('brand').textContent = c.name || 'Skill';
+  const t = c.title || 'One command, done';
+  const hi = c.highlight || t.split(' ').slice(-1)[0];
+  document.getElementById('h1').innerHTML = hi && t.includes(hi) ? t.replace(hi, `<span class="g">${hi}</span>`) : t;
+  if (c.badge) { const b = document.getElementById('badge'); b.textContent = c.badge; b.style.display = 'inline-block'; }
+</script>
+</body></html>

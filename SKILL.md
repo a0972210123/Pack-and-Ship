@@ -78,6 +78,14 @@ Follow the checklist `pack.mjs` prints and the per-platform notes in
   Download benefit, set visibility Public, add the 16:9 product image; copy the
   checkout link back into the repo's FUNDING.yml + README badge.
 
+To wire the "get it / sponsor" links into the repo automatically, run
+`node scripts/patch-repo.mjs <dir>` — it writes `.github/FUNDING.yml` and an idempotent
+README badge + call-to-action block from the config's `price.checkoutUrl` / `funding`
+(re-run with `--check` in CI to fail on drift). To keep score across a multi-day launch,
+run `node scripts/track.mjs <dir>` — it maintains a `launch-tracker.md` at the repo root
+(⬜ todo · 🟡 in review · ✅ live · ❌ rejected), keeping every row you've edited and only
+appending platforms it doesn't have (`references/launch-tracker-template.md`).
+
 Report what you generated and the exact remaining manual steps. Never claim a listing
 is live — you prepared the assets; the human submits.
 
@@ -93,10 +101,17 @@ ffmpeg for video) generates them from the same `ship.config.json` → `assets` b
   desktop/mobile × light/dark, stepping the demo.
 - `node assets/gen-video.mjs <dir>` — **16:9 demo video** (mp4 + gif) for YouTube/README.
 - `node assets/gen-reel.mjs <dir>` — **9:16 short-form reels**, one per language/hook
-  variant (ask which languages — English-primary; add others like 繁中 on request).
+  variant (ask which languages — English-primary; add others like 繁中 / 日本語 on
+  request, and confirm non-English caption copy before shipping it).
+- `node assets/gen-carousel.mjs <dir>` — **LinkedIn/Instagram carousel** (1080×1350,
+  4:5), one PNG per slide: cover → features → CTA. Falls back to `assets.social` +
+  `assets.hero.features` if no explicit `assets.carousel.slides`.
+- `node assets/gen-thumbnail.mjs <dir>` — **16:9 YouTube thumbnail** (big text + play
+  affordance) from `assets.thumbnail` (or `assets.social.tagline`).
 
 These need a **demo page** that auto-plays via `window.__startTour()` — point
 `assets.demoUrl` at the user's page, or adapt the bundled `assets/templates/showcase.html`.
+(Carousel and thumbnail render from config only — no demo page needed.)
 
 ## Optional — write launch posts
 

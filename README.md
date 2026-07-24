@@ -14,9 +14,11 @@ wanting the frontmatter-stripped body) so publishing is minutes, not an afternoo
 ## Use
 
 ```bash
-node scripts/lint.mjs   <targetSkillDir>   # validate — fix reds before shipping
-node scripts/pack.mjs   <targetSkillDir>   # build dist/: zip + plaintext + listing.md
-node scripts/sanitize.mjs <file.md>         # (just the plain-text-safe copy)
+node scripts/lint.mjs     <targetSkillDir>   # validate — fix reds before shipping
+node scripts/pack.mjs     <targetSkillDir>   # build dist/: zip + plaintext + listing.md
+node scripts/sanitize.mjs <file.md>          # (just the plain-text-safe copy)
+node scripts/patch-repo.mjs <targetSkillDir> # wire FUNDING.yml + README badges/CTA (--check for CI)
+node scripts/track.mjs    <targetSkillDir>   # maintain launch-tracker.md across a multi-day launch
 ```
 
 `dist/` then contains:
@@ -26,6 +28,23 @@ node scripts/sanitize.mjs <file.md>         # (just the plain-text-safe copy)
 | `<name>.zip` | Agensi, Polar (paid download), any registry taking a zip |
 | `<name>-plaintext.md` | explainx.ai (raw SKILL.md trips its INPUT_GUARD) |
 | `listing.md` | you — copy the per-platform fields; follow its checklist |
+
+## Marketing assets (optional)
+
+The [`assets/`](assets/README.md) module (Playwright, + ffmpeg for video) generates the
+visuals a listing converts on, all from the same `ship.config.json`:
+
+```bash
+node assets/gen-images.mjs      <dir>   # social preview 1280×640 + hero 16:9
+node assets/gen-screenshots.mjs <dir>   # up to 65 shots, desktop/mobile × light/dark
+node assets/gen-video.mjs       <dir>   # 16:9 demo video (mp4 + gif)
+node assets/gen-reel.mjs        <dir>   # 9:16 short-form reels, one per language/hook
+node assets/gen-carousel.mjs    <dir>   # LinkedIn/IG carousel (1080×1350) cover→features→CTA
+node assets/gen-thumbnail.mjs   <dir>   # YouTube thumbnail 16:9
+```
+
+Launch posts are written from [`references/posts.md`](references/posts.md) (a playbook,
+English-primary, ask the language).
 
 ## Config (optional)
 
