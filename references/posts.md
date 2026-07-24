@@ -59,8 +59,17 @@ only the **first ~2–3 lines** above the "…more" fold, so front-load them.
 - Then a short paragraph expanding the value, and a **"What you get"** bullet list.
 - **Links block** — this is the point of the description. **Ask the user which links to
   include** (see "Links block" below); at minimum the repo link. Label each link.
-- **Chapters** (optional but strong for demos): timestamped lines starting at `0:00` become
-  clickable chapters — e.g. `0:00 The problem · 0:18 One command · 0:41 It verifies itself`.
+- **Chapters** (optional — and easy to get wrong): YouTube only turns timestamps into
+  clickable chapters when **all** of these hold, else it silently ignores every one:
+  1. first timestamp is exactly `0:00`;
+  2. **≥ 3** timestamps, in ascending order;
+  3. each chapter is **≥ 10 seconds** long;
+  4. **every timestamp is within the actual video runtime**;
+  5. each line is a **single start timestamp + space + title** — never a range (`0:00-0:17` is
+     invalid; you don't write the end time, YouTube derives it from the next line).
+  Consequence: chapters need a video of **~40s or longer**. **Check the real runtime first**
+  (`ffprobe`/`ffmpeg -i`) — if the demo is short (≤ ~40s), DON'T emit chapters at all; replace
+  them with a one-line "In this Ns demo: …" summary, and consider uploading as a Short.
 - Close with a one-line "free & MIT" (or the price) and 3–5 plain hashtags.
 - Keep install commands / URLs in Latin in every language.
 
