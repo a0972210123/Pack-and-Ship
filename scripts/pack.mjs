@@ -54,8 +54,9 @@ fs.mkdirSync(dist, { recursive: true });
 const exclude = (cfg.zip?.exclude || ['node_modules', '.git', 'tests', 'dist', '.github']);
 const zipName = `${name}.zip`;
 try {
+  // bare `e` excludes a file; `e/*` excludes a directory's contents — cover both
   execFileSync('zip', ['-rq', path.join('dist', zipName), '.',
-    '-x', ...exclude.flatMap(e => [`${e}/*`, `./${e}/*`]), '-x', 'dist/*', '.git/*'], { cwd: dir });
+    '-x', ...exclude.flatMap(e => [e, `./${e}`, `${e}/*`, `./${e}/*`]), '-x', 'dist/*', '.git/*'], { cwd: dir });
   console.log('✓ dist/' + zipName);
 } catch (e) { console.error('! zip failed (is `zip` installed?):', e.message); }
 
