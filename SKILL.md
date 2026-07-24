@@ -131,9 +131,12 @@ thing. (Carousel and thumbnail render from config only — no demo page needed.)
 ## Optional — write launch posts
 
 When asked, write platform-tailored launch posts following `references/posts.md`
-(X, LinkedIn, Instagram, Facebook, Threads, Reddit, Product Hunt). Ask which languages
-(default English-primary). This is a playbook you fill from the config + the skill's
-real differentiators — not a script. Output a `posts.md` with one section per platform.
+(X, LinkedIn, Instagram, Facebook, Threads, Reddit, Product Hunt, and the **YouTube
+video-description box**). Ask which languages (default English-primary). This is a playbook
+you fill from the config + the skill's real differentiators — not a script. Output a
+`posts.md` with one section per platform. The links that drive traffic are the user's call:
+**ask which links to include** (repo is always safe; demo/install are free; a checkout /
+sponsor / paid-add-on link only if they opt in) — never add a money link uninvited.
 
 ## Notes
 

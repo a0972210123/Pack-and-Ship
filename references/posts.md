@@ -49,7 +49,41 @@ like 繁中 only if requested). Keep the install command and URLs in Latin in ev
 - Maker's first comment: why you built it, the demo, ask for feedback. Gallery = the
   hero 16:9 + screenshots + video. Line up a few supporters for launch day.
 
+### YouTube  (the description box under the demo video)
+The description is a discovery + traffic-driving surface, not an afterthought. YouTube shows
+only the **first ~2–3 lines** above the "…more" fold, so front-load them.
+
+- **Line 1**: the hook (same pain/number as the video's cold open).
+- **Lines 2–3**: one sentence on what the skill does + the **primary link** (put it above the
+  fold so it's clickable without expanding).
+- Then a short paragraph expanding the value, and a **"What you get"** bullet list.
+- **Links block** — this is the point of the description. **Ask the user which links to
+  include** (see "Links block" below); at minimum the repo link. Label each link.
+- **Chapters** (optional but strong for demos): timestamped lines starting at `0:00` become
+  clickable chapters — e.g. `0:00 The problem · 0:18 One command · 0:41 It verifies itself`.
+- Close with a one-line "free & MIT" (or the price) and 3–5 plain hashtags.
+- Keep install commands / URLs in Latin in every language.
+
+## Links block  (ask before including)
+
+The description and post CTAs drive traffic — but **which destinations is the user's call**.
+Ask, and default to the simplest (the repo link) if they don't care:
+
+- **Free**: GitHub repo (always safe), live demo page, install command.
+- **Paid / support**: a checkout, sponsor, or paid-add-on link — include **only if the user
+  opts in**. Never add a money link uninvited.
+
+Render it as a short labelled list, e.g.:
+
+```
+▸ Repo & docs:  https://github.com/<owner>/<repo>
+▸ Install:      npx skills add <owner>/<repo>
+▸ Support / Pro: <checkout url>
+```
+
 ## Output format
 
 Return a `posts.md` with one clearly-labeled section per requested platform (and per
 language), ready to copy-paste, plus a one-line note on which asset to attach to each.
+Include the **YouTube description** section whenever there's a demo video — it's the one
+"post" that keeps working long after launch day.
