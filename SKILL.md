@@ -97,12 +97,13 @@ ffmpeg for video) generates them from the same `ship.config.json` → `assets` b
 
 - `node assets/gen-images.mjs <dir>` — **social preview** (1280×640, for GitHub
   Settings) + **hero 16:9** (product image for Polar/marketplace). The social card
-  pairs a **left text column** with an optional **iconified example** on the right (a
-  mini app-window with one spotlit element + a coach-mark tooltip), configured via
+  pairs a **left text column** with an optional **iconified example** on the right — a
+  **faux dashboard with a real spotlight mask** (the spotlit card dims the rest of the
+  window, the same box-shadow-hole the tour uses) + a coach-mark tooltip, configured via
   `assets.social.mock`. The generator **verifies** the result — layout (nothing off-frame,
   headline not over-tall, text not colliding with the mockup) and iconification (window +
-  spotlit card + tooltip all rendered) — and exits non-zero on a defect, so a broken card
-  never ships silently.
+  ≥2 cards + the dimming mask + tooltip inside the window) — and exits non-zero on a defect,
+  so a broken card never ships silently.
 - `node assets/gen-screenshots.mjs <dir>` — up to **12 screenshots** across
   desktop/mobile × light/dark, stepping the demo.
 - `node assets/gen-video.mjs <dir>` — **16:9 demo video** (mp4 + gif) for YouTube/README.
@@ -112,8 +113,9 @@ ffmpeg for video) generates them from the same `ship.config.json` → `assets` b
 - `node assets/gen-carousel.mjs <dir>` — **LinkedIn/Instagram carousel** (1080×1350,
   4:5), one PNG per slide: cover → features → CTA. Falls back to `assets.social` +
   `assets.hero.features` if no explicit `assets.carousel.slides`.
-- `node assets/gen-thumbnail.mjs <dir>` — **16:9 YouTube thumbnail** (big text + play
-  affordance) from `assets.thumbnail` (or `assets.social.tagline`).
+- `node assets/gen-thumbnail.mjs <dir>` — **16:9 YouTube thumbnail(s)** from
+  `assets.thumbnail.styles`: `"simple"` (2-line big text + play affordance) and/or
+  `"before-after"` (a big hook + before/after faux dashboards showing the skill's payoff).
 
 These need a **demo page** that auto-plays via `window.__startTour()`. The best results
 come from **reading what the target skill actually does and designing a bespoke demo page

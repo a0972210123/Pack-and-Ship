@@ -18,23 +18,31 @@
   .pill{font-size:14px;font-weight:700;padding:7px 14px;border-radius:999px;border:1px solid #3a3358;color:#d7d3e6;background:rgba(124,58,237,.12)}
   .install{margin-top:22px;font-size:16px;color:#a9a7ba;font-family:ui-monospace,Menlo,monospace}
   .install b{color:var(--a,#c4b5fd)}
-  /* ── right iconified example (a spotlit UI + a tour tooltip) ── */
-  .mock{flex:1;position:relative;display:flex;align-items:center;justify-content:center;padding:20px 4px 44px}
-  .win{position:relative;width:100%;max-width:430px;background:linear-gradient(160deg,#1c1c28,#101017);border:1px solid #2d2d3c;border-radius:18px;box-shadow:0 34px 80px rgba(0,0,0,.55);padding:18px 18px 22px}
-  .dots{display:flex;gap:7px;margin-bottom:18px}.dots i{width:11px;height:11px;border-radius:50%;background:#3a3a48}
-  .cards{display:flex;gap:13px}
-  .cd{flex:1;background:#15151f;border:1px solid #24242f;border-radius:13px;padding:15px 16px}
-  .cd .l{font-size:12px;font-weight:800;letter-spacing:.08em;color:#8a889c;text-transform:uppercase}
-  .cd .v{font-size:27px;font-weight:850;margin-top:7px}
-  /* the spotlit card: accent ring + light hairline halo (luminance-safe, mirrors the tour's a11y ring) */
-  .cd.lit{border-color:transparent;background:#1b1b29;position:relative;z-index:2;
-    box-shadow:0 0 0 3px var(--a,#a78bfa),0 0 0 6px rgba(255,255,255,.9),0 0 46px rgba(167,139,250,.55)}
-  .tip{position:absolute;left:20px;bottom:-74px;width:262px;background:#fff;color:#15151c;border-radius:14px;padding:14px 16px;
-    box-shadow:0 22px 50px rgba(0,0,0,.5);font-size:15px;line-height:1.4}
-  .tip::before{content:'';position:absolute;top:-9px;left:40px;width:18px;height:18px;background:#fff;transform:rotate(45deg);border-radius:3px}
-  .tip .h{display:flex;align-items:center;gap:9px;margin-bottom:7px}
-  .tip .ic{width:26px;height:26px;border-radius:8px;background:rgba(124,58,237,.14);display:grid;place-items:center;font-size:15px}
-  .tip .ct{font-size:12px;font-weight:850;color:var(--ad,#7c3aed);background:rgba(124,58,237,.12);padding:3px 9px;border-radius:999px}
+  /* ── right iconified example: a faux dashboard with a REAL spotlight mask ── */
+  .mock{flex:1;position:relative;display:flex;align-items:center;justify-content:center;padding:14px 2px}
+  .win{position:relative;overflow:hidden;width:100%;max-width:448px;background:#0f0f17;border:1px solid #2d2d3c;border-radius:16px;box-shadow:0 34px 80px rgba(0,0,0,.55)}
+  .bar{display:flex;align-items:center;gap:15px;padding:12px 15px;border-bottom:1px solid #20202b;background:#13131c}
+  .bar .dots{display:flex;gap:6px}.bar .dots i{width:10px;height:10px;border-radius:50%;background:#3a3a48}
+  .bar .nav{display:flex;gap:15px;font-size:12px;font-weight:700;color:#6f6d84}
+  .bar .nav .on{color:var(--a,#c4b5fd)}
+  .body{padding:17px 15px 26px}
+  .cards{display:flex;gap:10px}
+  .cd{flex:1;background:#181822;border:1px solid #23232f;border-radius:11px;padding:11px 12px}
+  .cd .l{font-size:10px;font-weight:800;letter-spacing:.05em;color:#8a889c;text-transform:uppercase}
+  .cd .v{font-size:21px;font-weight:850;margin-top:5px;color:#f4f4f7}
+  .cd .d{font-size:10.5px;font-weight:800;margin-top:3px;color:#34d399}
+  /* the spotlit card punches a hole in a dark mask that dims the rest of the window
+     (the exact box-shadow-hole technique the tour uses; ring reads by luminance + white halo) */
+  .cd.lit{position:relative;z-index:5;border-color:transparent;background:#1d1d2b;
+    box-shadow:0 0 0 3px var(--a,#a78bfa),0 0 0 6px rgba(255,255,255,.92),0 0 0 2000px rgba(0,0,0,.62)}
+  .chart{display:flex;align-items:flex-end;gap:6px;height:78px;margin-top:16px}
+  .chart i{flex:1;border-radius:4px 4px 0 0;background:linear-gradient(180deg,var(--a,#7c3aed),#3f2c74)}
+  .tip{position:absolute;z-index:6;width:246px;background:#fff;color:#15151c;border-radius:13px;padding:12px 14px;
+    box-shadow:0 22px 50px rgba(0,0,0,.5);font-size:14px;line-height:1.38}
+  .tip::before{content:'';position:absolute;top:-9px;left:var(--arrow,26px);width:18px;height:18px;background:#fff;transform:rotate(45deg);border-radius:3px}
+  .tip .h{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+  .tip .ic{width:24px;height:24px;border-radius:7px;background:rgba(124,58,237,.14);display:grid;place-items:center;font-size:14px}
+  .tip .ct{font-size:11.5px;font-weight:850;color:var(--ad,#7c3aed);background:rgba(124,58,237,.12);padding:3px 9px;border-radius:999px}
   .tip .tx{color:#3a3a48;font-weight:600}
 </style></head><body>
   <div class="glow"></div>
@@ -48,8 +56,11 @@
     </div>
     <div class="mock" id="mock" style="display:none">
       <div class="win">
-        <div class="dots"><i></i><i></i><i></i></div>
-        <div class="cards" id="cards"></div>
+        <div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="nav" id="nav"></div></div>
+        <div class="body">
+          <div class="cards" id="cards"></div>
+          <div class="chart"><i style="height:52%"></i><i style="height:70%"></i><i style="height:58%"></i><i style="height:84%"></i><i style="height:66%"></i><i style="height:92%"></i><i style="height:74%"></i></div>
+        </div>
         <div class="tip" id="tip"></div>
       </div>
     </div>
@@ -68,18 +79,33 @@
   document.getElementById('sub').textContent = c.sub || '';
   document.getElementById('pills').innerHTML = (c.pills || []).map(p => `<span class="pill">${p}</span>`).join('');
   document.getElementById('install').innerHTML = c.install ? `▸ <b>${c.install}</b>` : '';
-  // iconified example (optional): a mini app window with one spotlit card + a tour tooltip
+  // iconified example (optional): a faux dashboard with a real spotlight mask + tour tooltip
   const m = c.mock;
   if (m && (m.cards || []).length) {
     document.body.classList.add('has-mock');
     document.getElementById('mock').style.display = 'flex';
     const lit = Number.isInteger(m.spotlight) ? m.spotlight : 0;
+    document.getElementById('nav').innerHTML = (m.nav || ['Dashboard', 'Reports', 'Audience'])
+      .map((n, i) => `<span class="${i === 0 ? 'on' : ''}">${n}</span>`).join('');
     document.getElementById('cards').innerHTML = (m.cards || []).map((cd, i) =>
-      `<div class="cd${i === lit ? ' lit' : ''}"><div class="l">${cd.label || ''}</div><div class="v">${cd.value || ''}</div></div>`).join('');
+      `<div class="cd${i === lit ? ' lit' : ''}"><div class="l">${cd.label || ''}</div><div class="v">${cd.value || ''}</div>${cd.delta ? `<div class="d">${cd.delta}</div>` : ''}</div>`).join('');
     const t = m.tip || {};
     document.getElementById('tip').innerHTML =
       `<div class="h"><span class="ic">${t.icon || '✨'}</span><span class="ct">${t.counter || '1/6'}</span></div>` +
       `<div class="tx">${t.text || ''}</div>`;
+    // anchor the tooltip just below the spotlit card, arrow pointing up at it, clamped inside the window
+    requestAnimationFrame(() => {
+      const win = document.querySelector('.win'), card = document.querySelectorAll('.cd')[lit], tip = document.getElementById('tip');
+      if (!win || !card) return;
+      const wr = win.getBoundingClientRect(), cr = card.getBoundingClientRect();
+      const top = cr.bottom - wr.top + 14;
+      let left = cr.left - wr.left;
+      left = Math.max(12, Math.min(left, wr.width - tip.offsetWidth - 12));
+      tip.style.top = top + 'px';
+      tip.style.left = left + 'px';
+      const arrow = (cr.left - wr.left) - left + 20;  // keep the arrow under the spotlit card
+      tip.style.setProperty('--arrow', Math.max(16, Math.min(arrow, tip.offsetWidth - 34)) + 'px');
+    });
   }
 </script>
 </body></html>

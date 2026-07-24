@@ -12,7 +12,7 @@ or `pip install imageio-ffmpeg`).
 | `gen-video.mjs` | `demo-16x9.mp4` + `demo.gif` — landscape demo recording | Playwright + ffmpeg |
 | `gen-reel.mjs` | `reel-<id>-9x16.mp4` — one short-form reel per language/hook variant | Playwright + ffmpeg |
 | `gen-carousel.mjs` | `carousel/NN-<type>.png` — 1080×1350 (4:5) LinkedIn/IG slides: cover → features → CTA | Playwright |
-| `gen-thumbnail.mjs` | `thumbnail-16x9.png` — YouTube thumbnail (big text + play affordance) | Playwright |
+| `gen-thumbnail.mjs` | `thumbnail-16x9.png` (2-line big text + play) and/or `thumbnail-beforeafter-16x9.png` (hook + before/after faux dashboards), one per `thumbnail.styles` | Playwright |
 
 ```bash
 node assets/gen-images.mjs      <targetDir>
@@ -39,12 +39,14 @@ replace it. It's harmless to leave in place, but the demo should represent *this
 ## The social card's iconified example
 
 `gen-images.mjs` builds the social preview as a **left text column + an optional right-side
-iconified example** — a mini app-window with one spotlit element and a coach-mark tooltip,
-driven by `assets.social.mock`. Fill it to mirror the skill's own output. The generator
-**verifies** every render: layout (nothing off-frame, headline ≤ ~210px tall, text not
-overlapping the mockup) and iconification (window + spotlit card + tooltip all present), and
-**exits non-zero** on any defect so a broken card is never shipped silently. Omit
-`assets.social.mock` and the card falls back to a clean full-width text layout.
+iconified example** — a **faux dashboard** (nav + KPI cards + chart) with a **real spotlight
+mask**: the spotlit card punches a hole in a dark box-shadow spread that dims the rest of the
+window (the exact technique the tour uses), plus a coach-mark tooltip. Driven by
+`assets.social.mock`; fill it to mirror the skill's own output. The generator **verifies**
+every render: layout (nothing off-frame, headline ≤ ~210px tall, text not overlapping the
+mockup) and iconification (window + ≥2 cards + the dimming mask on the spotlit card + tooltip
+inside the window), and **exits non-zero** on any defect so a broken card is never shipped
+silently. Omit `assets.social.mock` and the card falls back to a clean full-width text layout.
 
 ## Config (`ship.config.json` → `assets`)
 
@@ -56,7 +58,8 @@ overlapping the mockup) and iconification (window + spotlit card + tooltip all p
   "hero":   { "headline": "Ship guided tours that actually pass", "highlight": "actually pass", "features": ["…","…"], "footer": "Free · MIT" },
   "demoUrl": "http://localhost:8210/",
   "screenshots": { "count": 6, "viewports": ["desktop","mobile"], "themes": ["light","dark"] },
-  "thumbnail": { "title": "1 COMMAND = A GUIDED TOUR", "highlight": "GUIDED TOUR", "badge": "FREE · MIT" },
+  "thumbnail": { "styles": ["simple","before-after"], "title": "1 COMMAND =\nA GUIDED TOUR", "highlight": "A GUIDED TOUR", "badge": "FREE · MIT",
+    "beforeAfter": { "hook": "STOP USER CHURN", "highlight": "CHURN", "sub": "Toutour creates verified onboarding tours for ANY website.", "cta": "DO THIS!", "afterLabel": "VERIFIED TOURS" } },
   "carousel": { "slides": [
     { "type": "cover",   "title": "Your app has 40 features. New users find 4.", "highlight": "find 4.", "sub": "One command turns your UI into a guided tour." },
     { "type": "feature", "n": 1, "title": "Reads your live UI", "text": "No manual step mapping." },
@@ -68,10 +71,16 @@ overlapping the mockup) and iconification (window + spotlit card + tooltip all p
 }
 ```
 
-- **social.mock** (optional): the right-side iconified example. `cards` are mini KPI tiles;
-  `spotlight` is the index to emphasize (accent ring + luminance-safe white halo); `tip` is
-  the coach-mark tooltip (`icon`, `counter`, `text`). Mirror the skill's real output. Omit to
-  get a full-width text card.
+- **social.mock** (optional): the right-side iconified example — a faux dashboard with a real
+  spotlight mask. `nav` are the top-nav labels; `cards` are mini KPI tiles (`label`, `value`,
+  optional `delta`); `spotlight` is the index to emphasize (accent ring + luminance-safe white
+  halo + the dark mask that dims the rest); `tip` is the coach-mark tooltip (`icon`, `counter`,
+  `text`). Mirror the skill's real output. Omit to get a full-width text card.
+- **thumbnail.styles** (default `["simple"]`): which YouTube thumbnails to render. `"simple"`
+  = 2-line big text (use `\n` in `title` for the break) + `badge` + play affordance →
+  `thumbnail-16x9.png`. `"before-after"` = a big left hook + before/after faux dashboards →
+  `thumbnail-beforeafter-16x9.png`, driven by `thumbnail.beforeAfter` (`hook`, `highlight`,
+  `sub`, `cta`, `afterLabel`, optional `beforeLabel`).
 - **reel captions**: 9 strings — [0–2] the hook (before the tour), [3–8] over the six
   tour beats. `<b>` = gold emphasis, `<span class="p">` = accent. Add a variant per
   language (e.g. `id: "zh"` / `id: "ja"`) or per hook (pain vs data). Confirm non-English

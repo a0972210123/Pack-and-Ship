@@ -4,10 +4,11 @@
     background:radial-gradient(120% 130% at 78% 12%,var(--a2,#2b2350) 0%,#141019 44%,#08070c 100%)}
   .glow{position:absolute;width:720px;height:720px;left:-220px;bottom:-240px;border-radius:50%;
     background:radial-gradient(circle,var(--glow,rgba(167,139,250,.26)),transparent 60%)}
-  .wrap{position:relative;padding:74px 80px;height:100%;display:flex;flex-direction:column;justify-content:center;max-width:1000px}
+  .wrap{position:relative;padding:74px 80px;height:100%;display:flex;flex-direction:column;justify-content:center;max-width:1160px}
   .kick{display:inline-flex;align-items:center;gap:16px;font-size:24px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--a,#a78bfa);margin-bottom:30px}
   .kick .d{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,var(--a,#a78bfa),var(--ad,#7c3aed));display:grid;place-items:center;color:#fff;font-size:1.9rem}
-  h1{font-size:120px;line-height:.98;font-weight:900;letter-spacing:-.03em;text-shadow:0 6px 40px rgba(0,0,0,.5)}
+  h1{font-size:96px;line-height:1.04;font-weight:900;letter-spacing:-.03em;text-shadow:0 6px 40px rgba(0,0,0,.5)}
+  h1 .ln{display:block;white-space:nowrap}
   h1 .g{background:linear-gradient(135deg,var(--a,#c4b5fd),var(--ad,#7c3aed));-webkit-background-clip:text;background-clip:text;color:transparent}
   .badge{margin-top:38px;align-self:flex-start;font-size:30px;font-weight:850;letter-spacing:.04em;padding:16px 30px;border-radius:16px;
     background:linear-gradient(135deg,var(--gold,#fbbf24),var(--goldd,#d97706));color:#3a1d03}
@@ -32,8 +33,13 @@
   document.getElementById('emoji').textContent = c.emoji || '◑';
   document.getElementById('brand').textContent = c.name || 'Skill';
   const t = c.title || 'One command, done';
-  const hi = c.highlight || t.split(' ').slice(-1)[0];
-  document.getElementById('h1').innerHTML = hi && t.includes(hi) ? t.replace(hi, `<span class="g">${hi}</span>`) : t;
+  const hi = c.highlight;
+  // explicit line breaks with "\n"; each line kept on its own row (aim for 2 lines)
+  const lines = t.split('\n').map(ln => {
+    const inner = hi && ln.includes(hi) ? ln.replace(hi, `<span class="g">${hi}</span>`) : ln;
+    return `<span class="ln">${inner}</span>`;
+  }).join('');
+  document.getElementById('h1').innerHTML = lines;
   if (c.badge) { const b = document.getElementById('badge'); b.textContent = c.badge; b.style.display = 'inline-block'; }
 </script>
 </body></html>

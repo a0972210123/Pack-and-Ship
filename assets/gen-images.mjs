@@ -47,10 +47,16 @@ async function verifySocial(page, wantsMock) {
     const shown = mock && getComputedStyle(mock).display !== 'none';
     if (wantsMock) {
       if (!shown) { issues.push('mock configured but not rendered'); return issues; }
-      const win = vis(document.querySelector('.win')), lit = vis(document.querySelector('.cd.lit')), tip = vis(document.querySelector('.tip'));
+      const litEl = document.querySelector('.cd.lit'), tipEl = document.querySelector('.tip');
+      const win = vis(document.querySelector('.win')), lit = vis(litEl), tip = vis(tipEl);
       if (!win || win.width < 40 || win.height < 40) issues.push('mock window missing/degenerate');
+      if (document.querySelectorAll('.cd').length < 2) issues.push('faux UI needs ≥2 cards to read as a real interface');
       if (!lit || lit.width < 20) issues.push('spotlit card missing (no iconified emphasis)');
-      if (!tip || tip.width < 20 || !document.querySelector('.tip').textContent.trim()) issues.push('tour tooltip missing/empty');
+      // the spotlight mask = the lit card's large dark box-shadow spread; assert it's there
+      const sh = litEl ? getComputedStyle(litEl).boxShadow : '';
+      if (!/rgba?\(0, 0, 0/.test(sh) || !/\b[1-9]\d{2,}px/.test(sh)) issues.push('spotlight mask missing (lit card has no dimming box-shadow spread)');
+      if (!tip || tip.width < 20 || !(tipEl && tipEl.textContent.trim())) issues.push('tour tooltip missing/empty');
+      if (tip && win && (tip.bottom > win.bottom + 1 || tip.right > win.right + 1 || tip.left < win.left - 1)) issues.push('tooltip escapes the window');
       // text column must not collide with the mockup
       const mr = vis(mock);
       if (col && mr && col.right > mr.left + 2) issues.push('text column overlaps the mockup');

@@ -1,0 +1,92 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
+  *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,'Segoe UI',system-ui,sans-serif}
+  body{width:1280px;height:720px;overflow:hidden;color:#f4f4f7;position:relative;background:#0b0a10}
+  .wrap{display:flex;height:100%}
+  /* ── left: big hook ── */
+  .left{flex:0 0 512px;position:relative;padding:64px 52px;display:flex;flex-direction:column;
+    background:radial-gradient(120% 120% at 20% 0%,#241d47,#111019 60%);border-right:5px solid var(--a,#a78bfa)}
+  .hook{font-size:82px;line-height:.96;font-weight:900;letter-spacing:-.02em;text-transform:uppercase}
+  .hook .g{color:var(--a,#c4b5fd)}
+  .sub{margin-top:26px;font-size:38px;line-height:1.18;font-weight:800;color:#e9e7f2}
+  .brand{margin-top:auto;display:flex;align-items:center;gap:16px;font-size:34px;font-weight:850}
+  .brand .d{width:60px;height:60px;border-radius:16px;background:linear-gradient(135deg,var(--a,#a78bfa),var(--ad,#7c3aed));display:grid;place-items:center;color:#fff;font-size:2rem}
+  /* ── right: before / after ── */
+  .right{flex:1;position:relative;padding:34px 30px;display:flex;flex-direction:column;gap:20px;background:linear-gradient(200deg,#17131f,#0b0a10)}
+  .panel{position:relative;flex:1;border-radius:14px;overflow:hidden;border:1px solid #26263a}
+  .tag{position:absolute;top:14px;left:14px;z-index:4;font-size:20px;font-weight:900;letter-spacing:.04em;padding:7px 15px;border-radius:9px;color:#fff;background:#000}
+  .badge{position:absolute;z-index:5;display:grid;place-items:center;font-weight:900;color:#fff;border-radius:50%}
+  .badge.x{top:50%;right:26px;transform:translateY(-50%);width:96px;height:96px;background:#ef4444;font-size:60px;box-shadow:0 10px 30px rgba(239,68,68,.5)}
+  .badge.ck{top:50%;right:26px;transform:translateY(-50%);width:96px;height:96px;background:#22c55e;font-size:54px;box-shadow:0 10px 30px rgba(34,197,94,.5)}
+  .cap{position:absolute;bottom:14px;left:14px;z-index:7;font-size:23px;font-weight:900;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.85)}
+  .after .cap{color:#5ee9a6}
+  /* "DO THIS!" call-to-action pill straddling the two panels */
+  .cta{position:absolute;top:50%;right:150px;transform:translateY(-50%);z-index:9;font-size:30px;font-weight:950;letter-spacing:.02em;
+    color:#fff;background:var(--ad,#7c3aed);padding:11px 24px;border-radius:12px;box-shadow:0 12px 34px rgba(124,58,237,.6);text-transform:uppercase;white-space:nowrap}
+  .cta::after{content:'↓';display:block;text-align:center;font-size:24px;line-height:1;margin-top:2px}
+  .before .dash{filter:grayscale(.85) brightness(.5)}
+  .before::after{content:'';position:absolute;inset:0;background:rgba(120,0,0,.14);z-index:2}
+  /* faux dashboard */
+  .dash{height:100%;background:#0f0f17;display:flex;flex-direction:column}
+  .dash .top{display:flex;align-items:center;gap:10px;padding:11px 14px;background:#13131c;border-bottom:1px solid #20202b}
+  .dash .top i{width:9px;height:9px;border-radius:50%;background:#3a3a48}
+  .dash .top .nav{margin-left:8px;display:flex;gap:13px;font-size:12px;font-weight:700;color:#6f6d84}
+  .dash .top .nav .on{color:var(--a,#c4b5fd)}
+  .dash .kpis{display:flex;gap:11px;padding:14px}
+  .kpi{flex:1;background:#181822;border:1px solid #23232f;border-radius:10px;padding:11px 12px}
+  .kpi .l{font-size:10px;font-weight:800;letter-spacing:.05em;color:#8a889c}
+  .kpi .v{font-size:22px;font-weight:850;margin-top:4px;color:#f4f4f7}
+  .after .kpi.lit{position:relative;z-index:5;border-color:transparent;background:#1d1d2b;
+    box-shadow:0 0 0 3px var(--a,#a78bfa),0 0 0 6px rgba(255,255,255,.92),0 0 0 900px rgba(0,0,0,.6)}
+  .after .tip{position:absolute;z-index:6;left:26px;top:120px;width:300px;background:#fff;color:#15151c;border-radius:12px;padding:12px 15px;box-shadow:0 18px 40px rgba(0,0,0,.5);font-size:16px;line-height:1.35}
+  .after .tip::before{content:'';position:absolute;top:-8px;left:30px;width:16px;height:16px;background:#fff;transform:rotate(45deg);border-radius:3px}
+  .after .tip .h{display:flex;align-items:center;gap:9px;margin-bottom:6px}
+  .after .tip .ct{font-size:12px;font-weight:900;color:var(--ad,#7c3aed);background:rgba(124,58,237,.13);padding:3px 10px;border-radius:999px}
+  .after .tip .st{font-size:13px;font-weight:900;color:var(--ad,#7c3aed)}
+  .after .tip .tx{color:#3a3a48;font-weight:700}
+  .after .btn{margin-top:9px;display:inline-block;font-size:13px;font-weight:800;color:#fff;background:var(--ad,#7c3aed);padding:5px 12px;border-radius:8px}
+</style></head><body>
+  <div class="wrap">
+    <div class="left">
+      <div class="hook" id="hook"></div>
+      <div class="sub" id="sub"></div>
+      <div class="brand"><span class="d" id="emoji">◑</span> <span id="brand">Skill</span></div>
+    </div>
+    <div class="right">
+      <div class="cta" id="cta" style="display:none"></div>
+      <div class="panel before">
+        <div class="dash">
+          <div class="top"><i></i><i></i><i></i><div class="nav"><span class="on">Home</span><span>Setup</span><span>Docs</span><span>More</span></div></div>
+          <div class="kpis"><div class="kpi"><div class="l">STEP 1</div><div class="v">???</div></div><div class="kpi"><div class="l">STEP 2</div><div class="v">???</div></div><div class="kpi"><div class="l">STEP 3</div><div class="v">???</div></div></div>
+        </div>
+        <div class="tag">BEFORE</div>
+        <div class="badge x">✕</div>
+        <div class="cap" id="beforeCap">Confusing onboarding</div>
+      </div>
+      <div class="panel after">
+        <div class="dash">
+          <div class="top"><i></i><i></i><i></i><div class="nav"><span class="on">Dashboard</span><span>Reports</span><span>Audience</span></div></div>
+          <div class="kpis"><div class="kpi lit"><div class="l">VISITORS</div><div class="v">48.2k</div></div><div class="kpi"><div class="l">SIGNUPS</div><div class="v">2,940</div></div><div class="kpi"><div class="l">CHURN</div><div class="v">1.9%</div></div></div>
+        </div>
+        <div class="tip"><div class="h"><span class="ct" id="stepCt">STEP 1</span></div><div class="tx" id="tipTx">Your headline metrics — at a glance.</div><span class="btn">Next ›</span></div>
+        <div class="tag" style="background:var(--ad,#7c3aed)">AFTER</div>
+        <div class="badge ck">✓</div>
+        <div class="cap" id="afterCap">VERIFIED TOURS</div>
+      </div>
+    </div>
+  </div>
+<script>
+  const c = window.__CFG || {};
+  const r = document.documentElement.style;
+  if (c.accent) r.setProperty('--a', c.accent);
+  if (c.accentDark) r.setProperty('--ad', c.accentDark);
+  document.getElementById('emoji').textContent = c.emoji || '◑';
+  document.getElementById('brand').textContent = c.name || 'Skill';
+  const hook = c.hook || 'STOP THE GUESSWORK';
+  const hi = c.highlight;
+  document.getElementById('hook').innerHTML = hi && hook.includes(hi) ? hook.replace(hi, `<span class="g">${hi}</span>`) : hook;
+  document.getElementById('sub').textContent = c.sub || '';
+  if (c.afterLabel) document.getElementById('afterCap').textContent = c.afterLabel;
+  if (c.beforeLabel) document.getElementById('beforeCap').textContent = c.beforeLabel;
+  if (c.cta) { const el = document.getElementById('cta'); el.textContent = c.cta; el.style.display = 'block'; }
+</script>
+</body></html>
