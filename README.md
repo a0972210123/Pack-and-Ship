@@ -19,6 +19,7 @@ node scripts/pack.mjs     <targetSkillDir>   # build dist/: zip + plaintext + li
 node scripts/sanitize.mjs <file.md>          # (just the plain-text-safe copy)
 node scripts/patch-repo.mjs <targetSkillDir> # wire FUNDING.yml + README badges/CTA (--check for CI)
 node scripts/track.mjs    <targetSkillDir>   # maintain launch-tracker.md across a multi-day launch
+node scripts/metrics.mjs  <targetSkillDir>   # append a dated results snapshot (stars/views/installs/sales)
 ```
 
 `dist/` then contains:

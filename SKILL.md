@@ -86,6 +86,18 @@ run `node scripts/track.mjs <dir>` — it maintains a `launch-tracker.md` at the
 (⬜ todo · 🟡 in review · ✅ live · ❌ rejected), keeping every row you've edited and only
 appending platforms it doesn't have (`references/launch-tracker-template.md`).
 
+## Optional — measure results (accumulate the proof)
+
+A launch isn't done when you submit — the point is what it *did*. `node scripts/metrics.mjs
+<dir>` appends a **dated snapshot** to `results-tracker.md` (a time-series growth curve):
+`⭐ Stars`/`Forks` auto (best-effort GitHub API), `Listings` live/total derived from
+`launch-tracker.md`, and `YT views`/`Installs`/`Pro sales`/… filled by hand or with
+`--set "col=value, …"`. One row per day (re-running refreshes it, never duplicates). Log a
+**baseline before you launch**, then re-run as numbers come in — that accumulated evidence is
+what justifies a paid tier or a follow-up post (`references/results-tracker-template.md`).
+Note: in sandboxed sessions where `api.github.com` is proxy-blocked, fill stars/forks via the
+GitHub MCP tool or `--set`.
+
 Report what you generated and the exact remaining manual steps. Never claim a listing
 is live — you prepared the assets; the human submits.
 
