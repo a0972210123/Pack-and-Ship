@@ -9,7 +9,7 @@ or `pip install imageio-ffmpeg`).
 |---|---|---|
 | `gen-images.mjs` | `social-1280x640.png` (GitHub social preview / OG — left text + optional iconified example, **verified**), `hero-16x9.png` (product image) | Playwright |
 | `gen-screenshots.mjs` | `shots/NN-viewport-theme.png` — up to 12, across desktop/mobile × light/dark, stepping the demo tour | Playwright |
-| `gen-video.mjs` | `demo-16x9.mp4` + `demo.gif` — landscape demo recording | Playwright + ffmpeg |
+| `gen-video.mjs` | `demo-16x9.mp4` + `demo.gif` — 16:9 landscape demo (for 9:16 vertical/Shorts use `gen-reel`). Confirm orientation + length first → `assets.video` | Playwright + ffmpeg |
 | `gen-reel.mjs` | `reel-<id>-9x16.mp4` — one short-form reel per language/hook variant | Playwright + ffmpeg |
 | `gen-carousel.mjs` | `carousel/NN-<type>.png` — 1080×1350 (4:5) LinkedIn/IG slides: cover → features → CTA | Playwright |
 | `gen-thumbnail.mjs` | `thumbnail-16x9.png` (2-line big text + play) and/or `thumbnail-beforeafter-16x9.png` (hook + before/after faux dashboards), one per `thumbnail.styles` | Playwright |
@@ -57,6 +57,7 @@ silently. Omit `assets.social.mock` and the card falls back to a clean full-widt
     "mock": { "cards": [ {"label":"VISITORS","value":"48.2k"}, {"label":"SIGNUPS","value":"2,940"} ], "spotlight": 0, "tip": { "icon":"📊", "counter":"1 / 6", "text":"Your headline metrics live here — at a glance." } } },
   "hero":   { "headline": "Ship guided tours that actually pass", "highlight": "actually pass", "features": ["…","…"], "footer": "Free · MIT" },
   "demoUrl": "http://localhost:8210/",
+  "video":  { "orientation": "16:9", "seconds": 15 },
   "screenshots": { "count": 6, "viewports": ["desktop","mobile"], "themes": ["light","dark"] },
   "thumbnail": { "styles": ["simple","before-after"], "title": "1 COMMAND =\nA GUIDED TOUR", "highlight": "A GUIDED TOUR", "badge": "FREE · MIT",
     "beforeAfter": { "hook": "STOP USER CHURN", "highlight": "CHURN", "sub": "Toutour creates verified onboarding tours for ANY website.", "cta": "DO THIS!", "afterLabel": "VERIFIED TOURS" } },
@@ -71,6 +72,11 @@ silently. Omit `assets.social.mock` and the card falls back to a clean full-widt
 }
 ```
 
+- **video** (confirm with the user before generating a demo video): `orientation` (`"16:9"`
+  landscape → `gen-video`, or `"9:16"` vertical → `gen-reel` / a Short) and target `seconds`.
+  The **YouTube-description step reads these**: vertical or ≤ ~40s → no chapters + upload as a
+  Short; longer 16:9 → real chapters. Always re-check the actual runtime (`ffprobe`) before
+  writing timestamps — `gen-video`'s length depends on the tour's step count, so don't assume.
 - **social.mock** (optional): the right-side iconified example — a faux dashboard with a real
   spotlight mask. `nav` are the top-nav labels; `cards` are mini KPI tiles (`label`, `value`,
   optional `delta`); `spotlight` is the index to emphasize (accent ring + luminance-safe white

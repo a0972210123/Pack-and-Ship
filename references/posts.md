@@ -53,6 +53,12 @@ like 繁中 only if requested). Keep the install command and URLs in Latin in ev
 The description is a discovery + traffic-driving surface, not an afterthought. YouTube shows
 only the **first ~2–3 lines** above the "…more" fold, so front-load them.
 
+**Use the video's orientation + runtime** (confirmed when the video was generated, stored in
+`assets.video`, and re-checked with `ffprobe`). They decide the shape of the description:
+- **9:16 vertical, or ≤ ~40s** → it's a **Short**: no chapters, a one-line "In this Ns demo: …"
+  summary instead, tighter copy.
+- **16:9 and ≥ ~40s** → a standard upload that can carry real chapters (rules below).
+
 - **Line 1**: the hook (same pain/number as the video's cold open).
 - **Lines 2–3**: one sentence on what the skill does + the **primary link** (put it above the
   fold so it's clickable without expanding).

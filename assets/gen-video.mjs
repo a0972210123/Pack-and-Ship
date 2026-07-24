@@ -1,5 +1,10 @@
 #!/usr/bin/env node
-// Record a 16:9 demo video of the demo page (drives its tour), → mp4 + gif.
+// Record a 16:9 LANDSCAPE demo video of the demo page (drives its tour), → mp4 + gif.
+// For a 9:16 VERTICAL clip (YouTube Short / IG-TikTok) use gen-reel.mjs instead.
+// Confirm orientation + target length with the user first and record them in
+// ship.config.json → assets.video {orientation, seconds}; the YouTube-description step
+// reads them (short/vertical ⇒ no chapters + Short). Re-check the real runtime with
+// `ffprobe`/`ffmpeg -i` before writing timestamps — this clip's length tracks the tour.
 // Usage: node assets/gen-video.mjs [targetDir=.]
 // Needs ffmpeg ($FFMPEG or on PATH, or `pip install imageio-ffmpeg`).
 import fs from 'node:fs';

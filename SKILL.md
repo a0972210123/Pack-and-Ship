@@ -106,7 +106,14 @@ ffmpeg for video) generates them from the same `ship.config.json` → `assets` b
   so a broken card never ships silently.
 - `node assets/gen-screenshots.mjs <dir>` — up to **12 screenshots** across
   desktop/mobile × light/dark, stepping the demo.
-- `node assets/gen-video.mjs <dir>` — **16:9 demo video** (mp4 + gif) for YouTube/README.
+- `node assets/gen-video.mjs <dir>` — **demo video** (mp4 + gif) for YouTube/README.
+  **Before generating a demo video, confirm two things with the user:** (1) **orientation** —
+  **16:9 landscape** (`gen-video`, standard watch page / README) or **9:16 vertical**
+  (`gen-reel`, a YouTube Short / IG-TikTok); (2) **target length**. Record both in
+  `assets.video` (`orientation`, `seconds`) — the **YouTube-description step reads them**: a
+  clip ≤ ~40s or vertical means **no chapters** and upload-as-a-Short, while a longer 16:9 clip
+  can carry real chapters. After recording, verify the actual runtime (`ffprobe`/`ffmpeg -i`)
+  before writing timestamps — never assume the length.
 - `node assets/gen-reel.mjs <dir>` — **9:16 short-form reels**, one per language/hook
   variant (ask which languages — English-primary; add others like 繁中 / 日本語 on
   request, and confirm non-English caption copy before shipping it).
