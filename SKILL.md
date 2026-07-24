@@ -81,9 +81,34 @@ Follow the checklist `pack.mjs` prints and the per-platform notes in
 Report what you generated and the exact remaining manual steps. Never claim a listing
 is live — you prepared the assets; the human submits.
 
+## Optional — generate listing & marketing assets
+
+Most listings convert far better with visuals. The `assets/` module (Playwright, and
+ffmpeg for video) generates them from the same `ship.config.json` → `assets` block
+(see `assets/README.md`). Offer these; run the ones the user wants:
+
+- `node assets/gen-images.mjs <dir>` — **social preview** (1280×640, for GitHub
+  Settings) + **hero 16:9** (product image for Polar/marketplace).
+- `node assets/gen-screenshots.mjs <dir>` — up to **65 screenshots** across
+  desktop/mobile × light/dark, stepping the demo.
+- `node assets/gen-video.mjs <dir>` — **16:9 demo video** (mp4 + gif) for YouTube/README.
+- `node assets/gen-reel.mjs <dir>` — **9:16 short-form reels**, one per language/hook
+  variant (ask which languages — English-primary; add others like 繁中 on request).
+
+These need a **demo page** that auto-plays via `window.__startTour()` — point
+`assets.demoUrl` at the user's page, or adapt the bundled `assets/templates/showcase.html`.
+
+## Optional — write launch posts
+
+When asked, write platform-tailored launch posts following `references/posts.md`
+(X, LinkedIn, Instagram, Facebook, Threads, Reddit, Product Hunt). Ask which languages
+(default English-primary). This is a playbook you fill from the config + the skill's
+real differentiators — not a script. Output a `posts.md` with one section per platform.
+
 ## Notes
 
 - Keep free and paid packages **aligned**: the same zip serves the paid download and
   any registry listing, and a paid add-on should bundle a working SKILL.md (vendor the
   free engine so it runs standalone).
 - Re-running is safe and idempotent — `dist/` is rebuilt each time.
+- Asset generators need Playwright (`npm i -D playwright`) and, for video/reel, ffmpeg.
