@@ -7,8 +7,8 @@ or `pip install imageio-ffmpeg`).
 
 | Script | Output | Needs |
 |---|---|---|
-| `gen-images.mjs` | `social-1280x640.png` (GitHub social preview / OG), `hero-16x9.png` (product image) | Playwright |
-| `gen-screenshots.mjs` | `shots/NN-viewport-theme.png` — up to 65, across desktop/mobile × light/dark, stepping the demo tour | Playwright |
+| `gen-images.mjs` | `social-1280x640.png` (GitHub social preview / OG — left text + optional iconified example, **verified**), `hero-16x9.png` (product image) | Playwright |
+| `gen-screenshots.mjs` | `shots/NN-viewport-theme.png` — up to 12, across desktop/mobile × light/dark, stepping the demo tour | Playwright |
 | `gen-video.mjs` | `demo-16x9.mp4` + `demo.gif` — landscape demo recording | Playwright + ffmpeg |
 | `gen-reel.mjs` | `reel-<id>-9x16.mp4` — one short-form reel per language/hook variant | Playwright + ffmpeg |
 | `gen-carousel.mjs` | `carousel/NN-<type>.png` — 1080×1350 (4:5) LinkedIn/IG slides: cover → features → CTA | Playwright |
@@ -25,19 +25,34 @@ node assets/gen-thumbnail.mjs   <targetDir>
 
 `gen-carousel` and `gen-thumbnail` render purely from config — they need no demo page.
 
-## The demo page
+## The demo page — design one for the specific skill
 
-Screenshots/video/reel need a **demo page** — a page that shows your skill's output
-and auto-plays via a `window.__startTour()` hook. Set `assets.demoUrl` to your own
-served page, or omit it to use the bundled **`templates/showcase.html`** (a responsive
-"Aurora" dashboard with a self-contained spotlight tour) as a starting point to adapt.
+Screenshots/video/reel need a **demo page** that shows the skill's output and auto-plays
+via a `window.__startTour()` hook (step it with `#ttNext`). The approach that pays off:
+**read what the skill actually does and build a bespoke page for it** — its real UI, its
+real before/after — rather than reusing a generic dashboard. Set `assets.demoUrl` to the
+user's real page when one exists; otherwise author a small self-contained page tailored to
+the skill. **`templates/showcase.html`** (a responsive "Aurora" dashboard with a
+self-contained tour) is a *reference/starting point*, not a fixed template — adapt it or
+replace it. It's harmless to leave in place, but the demo should represent *this* skill.
+
+## The social card's iconified example
+
+`gen-images.mjs` builds the social preview as a **left text column + an optional right-side
+iconified example** — a mini app-window with one spotlit element and a coach-mark tooltip,
+driven by `assets.social.mock`. Fill it to mirror the skill's own output. The generator
+**verifies** every render: layout (nothing off-frame, headline ≤ ~210px tall, text not
+overlapping the mockup) and iconification (window + spotlit card + tooltip all present), and
+**exits non-zero** on any defect so a broken card is never shipped silently. Omit
+`assets.social.mock` and the card falls back to a clean full-width text layout.
 
 ## Config (`ship.config.json` → `assets`)
 
 ```json
 "assets": {
   "brand":  { "name": "Toutour", "emoji": "🧭", "accent": "#a78bfa", "accentDark": "#7c3aed", "gold": "#fbbf24", "goldDark": "#d97706" },
-  "social": { "tagline": "Turn any site into a guided experience", "highlight": "guided experience", "sub": "…", "pills": ["🎭 spotlight","🌗 dark mode","MIT"] },
+  "social": { "tagline": "Turn any site into a guided experience", "highlight": "guided experience", "sub": "…", "pills": ["🎭 spotlight","🌗 dark mode","MIT"],
+    "mock": { "cards": [ {"label":"VISITORS","value":"48.2k"}, {"label":"SIGNUPS","value":"2,940"} ], "spotlight": 0, "tip": { "icon":"📊", "counter":"1 / 6", "text":"Your headline metrics live here — at a glance." } } },
   "hero":   { "headline": "Ship guided tours that actually pass", "highlight": "actually pass", "features": ["…","…"], "footer": "Free · MIT" },
   "demoUrl": "http://localhost:8210/",
   "screenshots": { "count": 6, "viewports": ["desktop","mobile"], "themes": ["light","dark"] },
@@ -53,6 +68,10 @@ served page, or omit it to use the bundled **`templates/showcase.html`** (a resp
 }
 ```
 
+- **social.mock** (optional): the right-side iconified example. `cards` are mini KPI tiles;
+  `spotlight` is the index to emphasize (accent ring + luminance-safe white halo); `tip` is
+  the coach-mark tooltip (`icon`, `counter`, `text`). Mirror the skill's real output. Omit to
+  get a full-width text card.
 - **reel captions**: 9 strings — [0–2] the hook (before the tour), [3–8] over the six
   tour beats. `<b>` = gold emphasis, `<span class="p">` = accent. Add a variant per
   language (e.g. `id: "zh"` / `id: "ja"`) or per hook (pain vs data). Confirm non-English

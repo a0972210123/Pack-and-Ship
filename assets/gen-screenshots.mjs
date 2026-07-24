@@ -4,6 +4,7 @@
 // Usage: node assets/gen-screenshots.mjs [targetDir=.]
 // Config: assets.demoUrl (else the bundled templates/showcase.html is used);
 //         assets.screenshots { count, viewports:[desktop|mobile], themes:[light|dark] }
+// count is capped at 12 — a listing gallery of a dozen shots is already plenty.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -14,7 +15,7 @@ const dir = path.resolve(process.argv[2] || '.');
 const cfg = fs.existsSync(path.join(dir, 'ship.config.json')) ? JSON.parse(fs.readFileSync(path.join(dir, 'ship.config.json'), 'utf8')) : {};
 const A = cfg.assets || {};
 const S = A.screenshots || {};
-const count = Math.max(1, Math.min(65, S.count || 6));
+const count = Math.max(1, Math.min(12, S.count || 6));
 const viewports = (S.viewports || ['desktop', 'mobile']);
 const themes = (S.themes || ['light', 'dark']);
 const out = path.join(dir, 'dist', 'assets', 'shots');

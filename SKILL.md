@@ -96,8 +96,14 @@ ffmpeg for video) generates them from the same `ship.config.json` → `assets` b
 (see `assets/README.md`). Offer these; run the ones the user wants:
 
 - `node assets/gen-images.mjs <dir>` — **social preview** (1280×640, for GitHub
-  Settings) + **hero 16:9** (product image for Polar/marketplace).
-- `node assets/gen-screenshots.mjs <dir>` — up to **65 screenshots** across
+  Settings) + **hero 16:9** (product image for Polar/marketplace). The social card
+  pairs a **left text column** with an optional **iconified example** on the right (a
+  mini app-window with one spotlit element + a coach-mark tooltip), configured via
+  `assets.social.mock`. The generator **verifies** the result — layout (nothing off-frame,
+  headline not over-tall, text not colliding with the mockup) and iconification (window +
+  spotlit card + tooltip all rendered) — and exits non-zero on a defect, so a broken card
+  never ships silently.
+- `node assets/gen-screenshots.mjs <dir>` — up to **12 screenshots** across
   desktop/mobile × light/dark, stepping the demo.
 - `node assets/gen-video.mjs <dir>` — **16:9 demo video** (mp4 + gif) for YouTube/README.
 - `node assets/gen-reel.mjs <dir>` — **9:16 short-form reels**, one per language/hook
@@ -109,9 +115,16 @@ ffmpeg for video) generates them from the same `ship.config.json` → `assets` b
 - `node assets/gen-thumbnail.mjs <dir>` — **16:9 YouTube thumbnail** (big text + play
   affordance) from `assets.thumbnail` (or `assets.social.tagline`).
 
-These need a **demo page** that auto-plays via `window.__startTour()` — point
-`assets.demoUrl` at the user's page, or adapt the bundled `assets/templates/showcase.html`.
-(Carousel and thumbnail render from config only — no demo page needed.)
+These need a **demo page** that auto-plays via `window.__startTour()`. The best results
+come from **reading what the target skill actually does and designing a bespoke demo page
+for it** — a page that shows *this* skill's output, not a generic dashboard. Point
+`assets.demoUrl` at the user's real page when they have one; otherwise author a small
+self-contained page tailored to the skill (its real UI, its real before/after) and expose
+`window.__startTour()` + the `#ttNext` stepping hook. `assets/templates/showcase.html` is a
+**reference/starting point** (a responsive "Aurora" dashboard with a self-contained tour),
+not a fixed template — adapt it or replace it. Likewise fill `assets.social.mock` to mirror
+the skill's own output (labels/values/tooltip copy) so the social card demonstrates the real
+thing. (Carousel and thumbnail render from config only — no demo page needed.)
 
 ## Optional — write launch posts
 
