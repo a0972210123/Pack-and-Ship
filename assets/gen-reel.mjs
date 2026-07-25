@@ -117,7 +117,12 @@ const OVERLAY_CSS = `${capShift ? `body{padding-top:${capShift}px!important;box-
 // steps advanced, and how long we keep recording can never disagree.
 const TIMING = n => {
   const beats = Math.max(1, n - 3);
-  const beat0 = 7000, gap = 2200;
+  // Every other beat reads as action-then-label: the step advances, the caption
+  // follows 180ms later. The first beat used to break that rhythm — the tour
+  // started at tourAt but its caption did not arrive until beat0, leaving well
+  // over a second of spotlight with nothing naming it. beat0 now sits just past
+  // the tour's 350ms entrance so the first line lands like all the others.
+  const beat0 = 6000, gap = 2100;
   const endAt = beat0 + gap * beats + 200;
   const B = R.beats || {};
   // Which beat flips the theme, and which one runs the colour-vision check.
