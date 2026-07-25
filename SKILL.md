@@ -1,6 +1,6 @@
 ---
 name: pack-and-ship
-description: Package an agent skill for GitHub and every marketplace in one pass — validate the SKILL.md, build the distributable zip, produce a plain-text-safe copy for guarded uploaders, and generate a ready-to-paste listing sheet with the exact field values for each platform (Agensi, explainx.ai, SkillRegistry, Polar, GitHub). Use when the user wants to publish, list, distribute, or ship a skill, or asks to prepare marketplace/upload assets or a release zip for a SKILL.md project.
+description: Package an agent skill for GitHub and every marketplace in one pass — validate the SKILL.md, build the distributable zip, produce a plain-text-safe copy for guarded uploaders, and generate a ready-to-paste listing sheet with the exact field values for each platform (Agensi, Capafy, explainx.ai, SkillRegistry, Polar, GitHub). Use when the user wants to publish, list, distribute, or ship a skill, or asks to prepare marketplace/upload assets or a release zip for a SKILL.md project.
 ---
 
 # pack-and-ship — package a skill for GitHub + every marketplace
@@ -31,6 +31,14 @@ Run `node scripts/lint.mjs <targetDir>`. It checks the things marketplaces rejec
   handling) — marketplaces with security scans (Skills Directory, Agensi) reject these.
 
 Fix every failure and re-run until green. Do not ship a red lint.
+
+Then read **`references/repo-hygiene.md`** and check the repo against it, because
+the lint cannot see any of this. It covers what must stay private and what may go
+public, the three files that have to live at the repo root and be gitignored
+rather than moved, why `.gitignore` does not protect a marketplace package, and
+the audit commands for finding things that were committed and should not have
+been. On a first launch, do this before anything is uploaded — a public repo and
+a shipped package are both hard to take back.
 
 ## Phase 2 — Interview (only what changes the output)
 
@@ -178,3 +186,13 @@ sponsor / paid-add-on link only if they opt in) — never add a money link uninv
   free engine so it runs standalone).
 - Re-running is safe and idempotent — `dist/` is rebuilt each time.
 - Asset generators need Playwright (`npm i -D playwright`) and, for video/reel, ffmpeg.
+- **Point a publisher at a clean tree, never at the working repo.** Some packagers
+  ignore `.gitignore` entirely and exclude neither `dist/` nor a `marketing/`
+  folder; at least one also ships `.env`. Unzip `dist/<name>.zip` and publish that,
+  so the file set is one you have looked at.
+- **`track.mjs` only reads the tracker at the repo root.** If it has been moved,
+  the script writes a blank one and the recorded launch status is gone. It warns
+  when it starts from scratch — do not scroll past it.
+- Reels and Shorts are composed inside a safe area (`assets.reel.safeArea`), since
+  the feeds draw their own UI over the top, bottom and right of the frame.
+  `references/repo-hygiene.md` has the reasoning and the other cross-platform traps.

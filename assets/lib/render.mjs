@@ -40,9 +40,50 @@ export function findFfmpeg() {
   return null;
 }
 
-export function webmToMp4(ffmpeg, webm, mp4, { w, h }) {
+// Vertical feeds draw their own chrome over your video: a header up top, the
+// caption/audio strip along the bottom, an action rail down the right side, and
+// on Instagram a profile avatar that juts into the lower right. Anything you put
+// there is covered. These fractions are what stays visible; they are deliberately
+// generous at the bottom, where the overlays are worst.
+export const VERTICAL_SAFE_AREA = { top: 0.12, right: 0.08, bottom: 0.20, left: 0.08 };
+
+const even = n => Math.max(2, Math.round(n / 2) * 2);
+
+// ffmpeg takes 0xRRGGBB or a colour name, not the #RRGGBB every config file and
+// brand palette is written in. Expands #abc too.
+const ffColor = c => {
+  const s = String(c ?? '').trim();
+  const m = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(s);
+  if (!m) return s || 'black';
+  const hex = m[1].length === 3 ? m[1].replace(/./g, d => d + d) : m[1];
+  return '0x' + hex.toLowerCase();
+};
+
+// Resolve safe-area fractions into a concrete inset box for a w×h output.
+// Record at `innerW`×`innerH` (or that aspect) so the content is composed for
+// the visible box rather than scaled into it after the fact.
+export function safeFrame(w, h, safeArea = VERTICAL_SAFE_AREA, opts = {}) {
+  const frac = k => (typeof safeArea?.[k] === 'number' ? safeArea[k] : 0);
+  const left = even(w * frac('left'));
+  const top = even(h * frac('top'));
+  const innerW = even(w - left - even(w * frac('right')));
+  const innerH = even(h - top - even(h * frac('bottom')));
+  return { left, top, innerW, innerH, ...opts };
+}
+
+export function webmToMp4(ffmpeg, webm, mp4, { w, h, frame }) {
+  let vf = `scale=${w}:${h}`;
+  if (frame) {
+    const { left, top, innerW, innerH, background = 'black', border } = frame;
+    vf = `scale=${innerW}:${innerH}:flags=lanczos,pad=${w}:${h}:${left}:${top}:${ffColor(background)}`;
+    if (border && border.width > 0) {
+      const bw = Math.max(1, Math.round(border.width));
+      vf += `,drawbox=x=${left - bw}:y=${top - bw}:w=${innerW + bw * 2}:h=${innerH + bw * 2}`
+          + `:color=${ffColor(border.color || 'white')}:t=${bw}`;
+    }
+  }
   execFileSync(ffmpeg, ['-y', '-i', webm, '-movflags', '+faststart', '-pix_fmt', 'yuv420p',
-    '-vf', `scale=${w}:${h}`, '-c:v', 'libx264', '-crf', '21', '-preset', 'medium', mp4], { stdio: 'ignore' });
+    '-vf', vf, '-c:v', 'libx264', '-crf', '21', '-preset', 'medium', mp4], { stdio: 'ignore' });
 }
 
 export function webmToGif(ffmpeg, webm, gif, width = 760) {

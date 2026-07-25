@@ -2,6 +2,9 @@
 // Create/refresh a launch progress tracker at the repo root (launch-tracker.md).
 // Idempotent: keeps every row you've edited (status/date/link/notes) and only
 // APPENDS platforms it doesn't already have — so re-running never wipes progress.
+// That guarantee holds only while the file is where this script looks for it. If
+// it has been moved or ignored away, this writes a fresh blank tracker instead,
+// which is why a from-scratch write says so loudly rather than passing for normal.
 // Usage: node scripts/track.mjs [targetDir=.]
 // Platforms come from ship.config.json `launch.platforms`, else a sensible default
 // set (Polar included only for paid skills).
@@ -61,3 +64,9 @@ for (const r of rows) out.push('| ' + r.join(' | ') + ' |');
 out.push('');
 fs.writeFileSync(file, out.join(eol));
 console.log(`✓ launch-tracker.md (${rows.length} platforms${added ? `, +${added} new` : ''})`);
+if (!prevRaw) {
+  console.log('! no launch-tracker.md was present — this one starts blank.');
+  console.log('  Expected to see recorded progress? It was not read from anywhere:');
+  console.log('  this script only looks at ' + file);
+  console.log('  Restore your copy there before editing, or the statuses are lost.');
+}
