@@ -60,7 +60,9 @@ each marketplace, distilled from real submissions.
 
 ## Requirements
 
-Node (built-ins only) + the `zip` CLI for packaging.
+Node 18+, built-ins only — no external tools, no npm install. The archive is written
+by `scripts/zip.mjs` on top of `node:zlib`, so packaging works the same on Windows,
+macOS and Linux.
 
 ## License
 

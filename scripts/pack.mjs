@@ -6,6 +6,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { sanitize } from './sanitize.mjs';
+import { createZip } from './zip.mjs';
 
 const dir = path.resolve(process.argv[2] || '.');
 const P = p => path.join(dir, p);
@@ -50,15 +51,21 @@ const isPaid = Number(price.amount) > 0;
 const dist = P('dist');
 fs.mkdirSync(dist, { recursive: true });
 
-// 1) zip (exclude dev dirs). Requires `zip`.
-const exclude = (cfg.zip?.exclude || ['node_modules', '.git', 'tests', 'dist', '.github']);
+// 1) zip (exclude dev dirs). Written by scripts/zip.mjs — node:zlib only, so this
+// works on Windows, where there is no `zip` binary. A failure here is fatal: the
+// listing sheet below tells people to upload this file, so never emit one without it.
+const exclude = [...(cfg.zip?.exclude || ['node_modules', '.git', 'tests', 'dist', '.github']),
+  'dist', '.git'];  // always, even if the config overrode the list
 const zipName = `${name}.zip`;
+let zipped;
 try {
-  // bare `e` excludes a file; `e/*` excludes a directory's contents — cover both
-  execFileSync('zip', ['-rq', path.join('dist', zipName), '.',
-    '-x', ...exclude.flatMap(e => [e, `./${e}`, `${e}/*`, `./${e}/*`]), '-x', 'dist/*', '.git/*'], { cwd: dir });
-  console.log('✓ dist/' + zipName);
-} catch (e) { console.error('! zip failed (is `zip` installed?):', e.message); }
+  zipped = createZip({ cwd: dir, outFile: path.join(dist, zipName), exclude });
+} catch (e) {
+  console.error('✗ zip failed:', e.message);
+  console.error('  No dist/ written — a listing sheet pointing at a missing zip is worse than none.');
+  process.exit(1);
+}
+console.log(`✓ dist/${zipName} (${zipped.files.length} files, ${(zipped.bytes / 1024).toFixed(1)} KB)`);
 
 // 2) plain-text-safe copy (for INPUT_GUARD uploaders)
 const plainName = `${name}-plaintext.md`;
