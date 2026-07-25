@@ -5,7 +5,7 @@
 An [agent skill](SKILL.md) (universal `SKILL.md` format) that turns a skill project
 into ship-ready assets: a validated layout, a distributable zip, a plain-text-safe
 copy for guarded uploaders, and a **listing sheet with the exact field values for
-each platform** — Agensi, explainx.ai, SkillRegistry, Polar, GitHub.
+each platform** — Agensi, Capafy, explainx.ai, SkillRegistry, Polar, GitHub.
 
 It encodes the fiddly per-platform details (explainx's INPUT_GUARD, Agensi needing
 `SKILL.md` inside the zip, Polar as the Stripe-free paid channel, SkillRegistry
@@ -37,7 +37,7 @@ visuals a listing converts on, all from the same `ship.config.json`:
 
 ```bash
 node assets/gen-images.mjs      <dir>   # social preview 1280×640 + hero 16:9
-node assets/gen-screenshots.mjs <dir>   # up to 65 shots, desktop/mobile × light/dark
+node assets/gen-screenshots.mjs <dir>   # up to 12 shots, spread over desktop/mobile × light/dark
 node assets/gen-video.mjs       <dir>   # 16:9 demo video (mp4 + gif)
 node assets/gen-reel.mjs        <dir>   # 9:16 short-form reels, one per language/hook
 node assets/gen-carousel.mjs    <dir>   # LinkedIn/IG carousel (1080×1350) cover→features→CTA
