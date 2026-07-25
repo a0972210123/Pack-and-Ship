@@ -67,6 +67,35 @@ Overlays that must ignore the reservation — the caption band, an end card —
 mount on `document.documentElement`, not `body`, or they get shifted with the
 page they are supposed to sit clear of.
 
+## Earn the first second
+
+A feed is scrolled past, not watched. Whatever happens in the first second
+decides whether there is a second one, and a still frame there is a scroll.
+
+- **Cut the dead lead-in.** Screen recording starts when the browser context
+  does, but nothing can happen until the page has loaded and overlays are
+  injected — around a second of frozen frame, sitting exactly where it costs
+  most. Measure that gap and trim it off the front (`trimStart` on `webmToMp4`).
+  Leave roughly 300ms of the product visible so the opening line lands on
+  something rather than on nothing.
+- **Enter with movement, not a fade.** The band drops in, the first line pops
+  with an overshoot and settles, the next two cut in from alternating sides. A
+  polite cross-fade reads as nothing happening.
+- **Then stop.** Once the product is on screen, motion competes with the thing
+  it is pointing at. Hook hard for a second, then let the demo breathe — the
+  tour beats use a plain fade on purpose.
+
+## Derive the timeline from the content, never hard-code it
+
+Beat timings written out by hand drift the moment the copy changes. This is not
+hypothetical: the reel timeline listed nine captions but only advanced the tour
+three times, so the last three lines played over a tour frozen on step 4 of 6 —
+the copy claiming verification while the screen sat mid-walkthrough.
+
+Compute the beats from the caption list, advance one step per beat, and derive
+the recording length from the same numbers. One source, and the caption count,
+the step count and the run time cannot disagree.
+
 ## Size type in relative units
 
 Overlay text sized in `px` is baked for one viewport width. Change the safe area,

@@ -93,10 +93,34 @@ const OVERLAY_CSS = `${capShift ? `body{padding-top:${capShift}px!important;box-
 #rcap{position:fixed;${capPos}:0;left:0;right:0;height:${capH}px;box-sizing:border-box;padding:0 5.6vw;display:flex;align-items:center;justify-content:center;text-align:center;z-index:99500;background:linear-gradient(${MASK_DIR},${MASK} 0%,${MASK} 84%,transparent 100%);pointer-events:none}
 #rcap h2{color:${CAPTXT};font:850 7.4vw/1.12 system-ui,sans-serif;letter-spacing:-.01em;opacity:0;transform:translateY(12px);transition:opacity .35s,transform .35s;text-shadow:${CAPSHADOW};margin:0}
 #rcap.show h2{opacity:1;transform:none}#rcap h2 b{color:${capLight ? '#b45309' : '#fbbf24'}}#rcap h2 .p{color:${capLight ? '#6d28d9' : '#c4b5fd'}}
+/* A feed is scrolled past, not watched. The first second has to move, so the band
+   drops in and the hook lines pop and cut rather than fading politely. Once the
+   tour starts the motion stops — the product is the thing to look at by then, and
+   type that keeps dancing over it competes with what it is pointing at. */
+@keyframes rband{from{transform:translateY(${capPos === 'top' ? '-105%' : '105%'})}to{transform:none}}
+@keyframes rpop{0%{opacity:0;transform:scale(.5) translateY(14px) rotate(-5deg)}
+40%{opacity:1;transform:scale(1.10) translateY(0) rotate(2deg)}
+56%{transform:scale(.95) rotate(-2.5deg)}70%{transform:scale(1.03) rotate(1.4deg)}
+84%{transform:scale(.99) rotate(-.6deg)}100%{opacity:1;transform:none}}
+@keyframes rcut{0%{opacity:0;transform:translateX(var(--from)) skewX(var(--skew)) scale(.94)}
+70%{opacity:1;transform:translateX(0) skewX(0) scale(1.04)}100%{opacity:1;transform:none}}
+#rcap{animation:rband .5s cubic-bezier(.2,1.3,.3,1) both}
+#rcap.show h2.pop{animation:rpop .95s cubic-bezier(.2,1.4,.3,1) both}
+#rcap.show h2.cutl{--from:-17vw;--skew:-7deg;animation:rcut .42s cubic-bezier(.2,1.25,.3,1) both}
+#rcap.show h2.cutr{--from:17vw;--skew:7deg;animation:rcut .42s cubic-bezier(.2,1.25,.3,1) both}
 #rend{position:fixed;inset:0;z-index:99700;background:radial-gradient(120% 120% at 50% 30%,#2b2350,#0b0b10 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3.3vw;opacity:0;transition:opacity .5s;pointer-events:none;font-family:system-ui,sans-serif}
 #rend.show{opacity:1}#rend .lg{width:17.8vw;height:17.8vw;border-radius:4.8vw;background:linear-gradient(135deg,#a78bfa,#7c3aed);display:grid;place-items:center;font-size:8.9vw;color:#fff}
 #rend h1{color:#fff;font-size:9.3vw;font-weight:850;margin:0}#rend .tag{color:#c4b5fd;font-size:4.3vw;font-weight:700}
 #rend .cmd{margin-top:1.5vw;background:#0f0f14;border:1px solid #2a2a33;color:#c4b5fd;font-family:ui-monospace,Menlo,monospace;font-size:3.5vw;font-weight:700;padding:2.6vw 3.7vw;border-radius:2.6vw}`;
+
+// One place the timeline is decided, so the caption count, the number of tour
+// steps advanced, and how long we keep recording can never disagree.
+const TIMING = n => {
+  const beats = Math.max(1, n - 3);
+  const beat0 = 7000, gap = 2200;
+  const endAt = beat0 + gap * beats + 200;
+  return { hook0: 250, hook1: 2100, hook2: 3900, tourAt: 5600, beat0, gap, darkOn: 3, endAt, runMs: endAt + 2800 };
+};
 
 async function record(v) {
   const browser = await launch();
@@ -104,11 +128,15 @@ async function record(v) {
   const url = A.demoUrl || `http://localhost:${port}/templates/showcase.html`;
   const raw = path.join(out, '_reel_raw_' + v.id);
   fs.rmSync(raw, { recursive: true, force: true });
+  const recStart = Date.now();
   const ctx = await browser.newContext({ viewport: SHOT, deviceScaleFactor: 2, recordVideo: { dir: raw, size: SHOT } });
   const page = await ctx.newPage();
   await page.goto(url); await page.waitForTimeout(600);
   await page.addStyleTag({ content: OVERLAY_CSS });
-  await page.evaluate(({ caps, endTag, name, install }) => {
+  // Everything up to here is a still frame in the recording. Keep a short beat of
+  // the product before the first line lands, and cut the rest off the front.
+  const lead = Math.max(0, Date.now() - recStart - 300) / 1000;
+  await page.evaluate(({ caps, endTag, name, install, t }) => {
     // Mounted on <html>, not <body>: the body carries the translate that frees up
     // the caption band, and an overlay inside it would be shifted along with the
     // page it is supposed to sit clear of.
@@ -117,21 +145,43 @@ async function record(v) {
     end.innerHTML = `<div class="lg">✦</div><h1>${name}</h1><div class="tag">${endTag || ''}</div>${install ? `<div class="cmd">${install}</div>` : ''}`;
     document.documentElement.appendChild(end);
     const T = document.getElementById('rcapT');
-    const show = h => { cap.classList.remove('show'); setTimeout(() => { T.innerHTML = h; cap.classList.add('show'); }, 180); };
+    const show = (h, kind) => {
+      cap.classList.remove('show');
+      setTimeout(() => {
+        T.innerHTML = h;
+        T.className = kind || '';
+        void T.offsetWidth;             // restart the animation for the new line
+        cap.classList.add('show');
+      }, 180);
+    };
     const hide = () => cap.classList.remove('show');
     const next = () => document.getElementById('ttNext')?.click();
     const dark = () => document.documentElement.setAttribute('data-theme', 'dark');
     const c = caps; const S = (ms, fn) => setTimeout(fn, ms);
-    S(300, () => show(c[0])); S(2100, () => show(c[1])); S(3900, () => show(c[2]));
-    S(5600, () => { hide(); window.__startTour && window.__startTour(); });
-    S(7000, () => show(c[3])); S(9200, () => { next(); show(c[4]); }); S(11400, () => { next(); show(c[5]); });
-    S(13600, () => { next(); dark(); show(c[6]); }); S(15800, () => show(c[7])); S(18000, () => show(c[8]));
-    S(20200, () => { try { Toutour.end(); } catch (e) {} hide(); end.classList.add('show'); });
-  }, { caps: v.captions, endTag: v.endTag, name, install });
-  await page.waitForTimeout(23000);
+
+    // Hook: the three lines before the tour, each entering differently.
+    const HOOK = [[t.hook0, 'pop'], [t.hook1, 'cutl'], [t.hook2, 'cutr']];
+    HOOK.forEach(([at, kind], i) => { if (c[i] != null) S(at, () => show(c[i], kind)); });
+    S(t.tourAt, () => { hide(); window.__startTour && window.__startTour(); });
+
+    // Beats are derived from the caption list rather than written out, because
+    // hard-coding them let the two drift: captions ran to the ninth line while
+    // the tour sat on step 4 of 6, having been advanced only three times.
+    // Every beat after the first advances exactly one step.
+    for (let i = 3; i < c.length; i++) {
+      const at = t.beat0 + t.gap * (i - 3);
+      S(at, () => {
+        if (i > 3) next();
+        if (i - 3 === t.darkOn) dark();
+        show(c[i]);
+      });
+    }
+    S(t.endAt, () => { try { Toutour.end(); } catch (e) {} hide(); end.classList.add('show'); });
+  }, { caps: v.captions, endTag: v.endTag, name, install, t: TIMING(v.captions.length) });
+  await page.waitForTimeout(TIMING(v.captions.length).runMs);
   await ctx.close(); server.close(); await browser.close();
   const webm = fs.readdirSync(raw).map(f => path.join(raw, f)).find(f => f.endsWith('.webm'));
-  if (ff && webm) { webmToMp4(ff, webm, path.join(out, `reel-${v.id}-9x16.mp4`), { ...OUT, frame: FRAME }); fs.rmSync(raw, { recursive: true, force: true }); console.log(`✓ dist/assets/reel-${v.id}-9x16.mp4`); }
+  if (ff && webm) { webmToMp4(ff, webm, path.join(out, `reel-${v.id}-9x16.mp4`), { ...OUT, frame: FRAME, trimStart: lead }); fs.rmSync(raw, { recursive: true, force: true }); console.log(`✓ dist/assets/reel-${v.id}-9x16.mp4 (trimmed ${lead.toFixed(1)}s of lead-in)`); }
   else console.log(`! recorded ${v.id} but no ffmpeg — raw webm kept at ${raw}`);
 }
 

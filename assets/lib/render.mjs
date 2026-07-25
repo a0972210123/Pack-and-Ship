@@ -75,7 +75,11 @@ export function safeFrame(w, h, safeArea = VERTICAL_SAFE_AREA, opts = {}) {
   return { left, top, innerW, innerH, ...opts };
 }
 
-export function webmToMp4(ffmpeg, webm, mp4, { w, h, frame }) {
+// `trimStart` (seconds) drops dead air from the head. Video recording begins when
+// the browser context does, but the timeline cannot start until the page has
+// loaded and the overlays are injected — a second or more of a still frame, right
+// where a feed decides whether to keep watching.
+export function webmToMp4(ffmpeg, webm, mp4, { w, h, frame, trimStart = 0 }) {
   let vf = `scale=${w}:${h}`;
   if (frame) {
     const { left, top, innerW, innerH, background = 'black', border } = frame;
@@ -86,7 +90,8 @@ export function webmToMp4(ffmpeg, webm, mp4, { w, h, frame }) {
           + `:color=${ffColor(border.color || 'white')}:t=${bw}`;
     }
   }
-  execFileSync(ffmpeg, ['-y', '-i', webm, '-movflags', '+faststart', '-pix_fmt', 'yuv420p',
+  const seek = trimStart > 0 ? ['-ss', String(trimStart)] : [];
+  execFileSync(ffmpeg, ['-y', ...seek, '-i', webm, '-movflags', '+faststart', '-pix_fmt', 'yuv420p',
     '-vf', vf, '-c:v', 'libx264', '-crf', '21', '-preset', 'medium', mp4], { stdio: 'ignore' });
 }
 
