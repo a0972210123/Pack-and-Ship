@@ -1,3 +1,8 @@
 dist/
 node_modules/
 *.log
+
+# Playwright and ffmpeg are optional, needed only by the asset generators.
+# Installing them leaves these behind; the shipped skill stays dependency-free.
+package.json
+package-lock.json
