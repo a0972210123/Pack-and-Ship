@@ -193,6 +193,9 @@ sponsor / paid-add-on link only if they opt in) — never add a money link uninv
 - **`track.mjs` only reads the tracker at the repo root.** If it has been moved,
   the script writes a blank one and the recorded launch status is gone. It warns
   when it starts from scratch — do not scroll past it.
-- Reels and Shorts are composed inside a safe area (`assets.reel.safeArea`), since
-  the feeds draw their own UI over the top, bottom and right of the frame.
-  `references/repo-hygiene.md` has the reasoning and the other cross-platform traps.
+- **Read `references/demo-composition.md` before generating or judging any demo
+  asset** — for a skill, a site or an app. Safe areas, giving captions reserved
+  space instead of floating them over the product, why that space must come from
+  padding and never a transform, relative type sizing, and the habit that catches
+  all of it: extract frames and actually look at them. Encoding cleanly proves
+  nothing.

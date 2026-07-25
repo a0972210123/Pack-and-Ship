@@ -62,6 +62,11 @@ each marketplace, distilled from real submissions.
 private, and the quiet failures that teach it: marketing material going public with the
 product, `.gitignore` not protecting a package, a tracker silently losing its history.
 
+[`references/demo-composition.md`](references/demo-composition.md) — composing a demo of
+any product (skill, site, app) so it survives the platform's own UI: safe areas, reserved
+caption bands, why that space must come from padding rather than a transform, and the
+frame-by-frame check that catches what clean encoding hides.
+
 ## Planned
 
 [`ROADMAP.md`](ROADMAP.md) — brand-colour tokens, and a mascot stage in the corner of

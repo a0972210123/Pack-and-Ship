@@ -43,9 +43,13 @@ export function findFfmpeg() {
 // Vertical feeds draw their own chrome over your video: a header up top, the
 // caption/audio strip along the bottom, an action rail down the right side, and
 // on Instagram a profile avatar that juts into the lower right. Anything you put
-// there is covered. These fractions are what stays visible; they are deliberately
-// generous at the bottom, where the overlays are worst.
-export const VERTICAL_SAFE_AREA = { top: 0.12, right: 0.08, bottom: 0.20, left: 0.08 };
+// there is covered. These fractions are the inset; what is left is 90% × 80% of
+// the frame, weighted towards the bottom where the overlays are worst.
+//
+// This is a deliberate trade: 13% at the bottom is thinner than Instagram's
+// caption strip on some devices, so the lowest band of content can still be
+// grazed. Raise `bottom` for a reel whose bottom edge carries anything critical.
+export const VERTICAL_SAFE_AREA = { top: 0.07, right: 0.05, bottom: 0.13, left: 0.05 };
 
 const even = n => Math.max(2, Math.round(n / 2) * 2);
 
