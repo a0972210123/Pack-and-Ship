@@ -122,7 +122,7 @@ const TIMING = n => {
   // started at tourAt but its caption did not arrive until beat0, leaving well
   // over a second of spotlight with nothing naming it. beat0 now sits just past
   // the tour's 350ms entrance so the first line lands like all the others.
-  const beat0 = 6000, gap = 2100;
+  const beat0 = 6000, gap = 1950;
   const endAt = beat0 + gap * beats + 200;
   const B = R.beats || {};
   // Which beat flips the theme, and which one runs the colour-vision check.
@@ -130,6 +130,10 @@ const TIMING = n => {
   // "colour-blind safe" while nothing on screen changes is asserting, not showing.
   return {
     hook0: 250, hook1: 2100, hook2: 3900, tourAt: 5600, beat0, gap, endAt,
+    // How long the outgoing line takes to clear before the next one lands. It is
+    // also what makes a beat read as action-then-label, so it belongs here with
+    // the rest of the timeline rather than buried in the swap function.
+    lag: B.lag === undefined ? 150 : B.lag,
     darkOn: B.darkOn === undefined ? 3 : B.darkOn,
     cvdOn: B.cvdOn === undefined ? 4 : B.cvdOn,
     runMs: endAt + 2800,
@@ -166,7 +170,7 @@ async function record(v) {
         T.className = kind || '';
         void T.offsetWidth;             // restart the animation for the new line
         cap.classList.add('show');
-      }, 180);
+      }, t.lag);
     };
     const hide = () => cap.classList.remove('show');
     const next = () => document.getElementById('ttNext')?.click();
