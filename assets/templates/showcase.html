@@ -88,8 +88,12 @@
 </style>
 <style>
   :root{--bg:#f6f7fb;--surface:#fff;--text:#111827;--muted:#6b7280;--accent:#7c3aed;--accent-bg:#ede9fe;--border:#e8e9ef;--radius:14px;
+        --on-accent:#fff;--pos:#15803d;--neg:#b91c1c;
         --tt-surface:var(--surface);--tt-text:var(--text);--tt-muted:var(--muted);--tt-accent:var(--accent);--tt-accent-bg:var(--accent-bg);--tt-border:var(--border);--tt-radius:14px}
-  :root[data-theme=dark]{--bg:#0c0c11;--surface:#16161d;--text:#f4f4f7;--muted:#9ca3af;--accent:#a78bfa;--accent-bg:#241d47;--border:#26262f}
+  /* Dark is not the same palette dimmed. The accent gets lighter, so text on it
+     has to get darker; status colours have to lighten to clear the surface. */
+  :root[data-theme=dark]{--bg:#0c0c11;--surface:#16161d;--text:#f4f4f7;--muted:#9ca3af;--accent:#a78bfa;--accent-bg:#241d47;--border:#26262f;
+        --on-accent:#1a1030;--pos:#4ade80;--neg:#fca5a5}
   *{box-sizing:border-box;margin:0;padding:0}
   body{font:15px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
   .app{display:grid;grid-template-columns:210px 1fr;min-height:100vh}
@@ -103,13 +107,15 @@
   .top h1{font-size:1.35rem;font-weight:800}
   .tools{display:flex;align-items:center;gap:.6rem}
   .btn{border:1px solid var(--border);background:var(--surface);color:var(--text);padding:.5rem .9rem;border-radius:10px;font-weight:600;cursor:pointer;font-size:.85rem}
-  .btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
-  .iconbtn{width:38px;height:38px;border:1px solid var(--border);background:var(--surface);border-radius:10px;cursor:pointer;font-size:1rem}
+  .btn-primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+  /* color is not optional here: a button does not inherit it, so leaving it out
+     means the UA default, which only ever suits one of the two themes. */
+  .iconbtn{width:38px;height:38px;border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:10px;cursor:pointer;font-size:1rem}
   .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.3rem}
   .kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem}
   .kpi .label{color:var(--muted);font-size:.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
   .kpi .val{font-size:1.7rem;font-weight:800;margin-top:.3rem}
-  .kpi .delta{font-size:.8rem;font-weight:700;margin-top:.15rem}.up{color:#16a34a}.down{color:#dc2626}
+  .kpi .delta{font-size:.8rem;font-weight:700;margin-top:.15rem}.up{color:var(--pos)}.down{color:var(--neg)}
   .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;margin-bottom:1.2rem}
   .panel h3{font-size:.95rem;font-weight:800;margin-bottom:.2rem}.panel .sub{color:var(--muted);font-size:.82rem;margin-bottom:1rem}
   .bars{display:flex;align-items:flex-end;gap:10px;height:150px;padding-top:.4rem}
@@ -133,7 +139,7 @@
   </aside>
   <main class="main">
     <div class="top"><h1 id="pageTitle">Dashboard</h1>
-      <div class="tools"><button class="iconbtn" id="themeBtn" title="Theme">🌙</button>
+      <div class="tools"><button class="iconbtn" id="themeBtn" title="Theme">🌙</button><button class="iconbtn" id="cvdBtn" title="Colour-vision check">👁</button>
         <button class="btn" id="dateRange">Last 30 days ▾</button><button class="btn btn-primary" id="exportBtn">⬇ Export</button>
         <button class="iconbtn" id="helpBtn" title="Tour">?</button></div>
     </div>
@@ -395,6 +401,14 @@
   document.getElementById('bars').innerHTML=[40,62,55,78,70,90,66].map(function(h){return '<div class=bar style=height:'+h+'%></div>';}).join('');
   var themeBtn=document.getElementById('themeBtn');
   themeBtn.addEventListener('click',function(){var d=document.documentElement.getAttribute('data-theme')==='dark';document.documentElement.setAttribute('data-theme',d?'light':'dark');themeBtn.textContent=d?'🌙':'☀️';});
+  // Colour-vision check. Grayscale is the harshest test there is — strip every
+  // hue and see whether the interface still reads. A spotlight that survives it
+  // survives any colour vision, which is the claim the halo is there to earn.
+  // Applied to <html>: a filter makes its element the containing block for fixed
+  // descendants, and <html> is the one box where that changes nothing.
+  var cvdBtn=document.getElementById('cvdBtn');
+  window.__setCvd=function(on){document.documentElement.style.filter=on?'grayscale(1)':'';cvdBtn.textContent=on?'🌈':'👁';};
+  cvdBtn.addEventListener('click',function(){window.__setCvd(!document.documentElement.style.filter);});
   document.querySelectorAll('#filters .chip').forEach(function(c){c.addEventListener('click',function(){document.querySelectorAll('#filters .chip').forEach(function(x){x.classList.remove('on');});c.classList.add('on');});});
   var steps=[
     {target:'#kpis',icon:'📊',place:'bottom',text:'Your headline metrics — at a glance.'},

@@ -127,6 +127,52 @@ Each reel is real-time recording — around 25 seconds each. Re-rendering every
 language variant to inspect one composition change wastes minutes per look.
 `gen-reel.mjs --only <id>` records a single variant.
 
+## Contrast, and themes that are actually responsive
+
+Run it, do not eyeball it:
+
+```bash
+node assets/check-contrast.mjs [targetDir | url]     # exits non-zero on failures
+```
+
+It renders the page in every theme and measures each piece of visible text
+against what is really behind it, to WCAG AA. On the demo template it found four
+distinct failures where a careful look had found one.
+
+**The failure that keeps recurring: a rule that sets `background` but not
+`color` on a form control.** Buttons, inputs, selects and textareas do **not**
+inherit colour — the browser gives them its own default. That default happens to
+suit one theme, so the control looks right in the one you developed in and turns
+invisible in the other. It survives review because nobody reads a stylesheet
+hunting for an absence. Real example: a `?` button at **1.17:1** in dark mode,
+black glyph on a near-black surface, while its neighbour survived only because
+its label was an emoji, which carries its own colour.
+
+The others are worth knowing too:
+
+- **Dark is not the light palette dimmed.** Accents usually *lighten* in dark
+  mode, so white-on-accent that passed in light mode fails — a primary button at
+  2.72:1. Give it an `--on-accent` token that flips with the theme.
+- **Status colours need theme variants.** A green that reads on white is too
+  light for it (3.3:1), and a red that reads on white is too dark for a dark
+  surface (3.73:1). Put them in variables, not literals.
+
+A checker only sees what is rendered, so run it with the interface in its states
+— tour open, modal open, menu expanded — not just at rest.
+
+## Demonstrate the claim, do not assert it
+
+Marketing copy that says "colour-blind safe" over an unchanged screen is an
+assertion. Give the demo a way to show it: a grayscale toggle is the harshest
+test available, because stripping every hue proves the interface reads by
+luminance alone, which covers any colour vision. The showcase template exposes
+`window.__setCvd(bool)`, and `assets.reel.beats.cvdOn` points it at whichever
+beat makes the claim.
+
+Apply such a filter to `<html>`. A CSS `filter` makes its element the containing
+block for `position: fixed` descendants — the same trap as `transform` — and
+`<html>` is the one box where that changes nothing.
+
 ## Consistency across assets
 
 Social card, hero, screenshots, reel, carousel and thumbnail all read from the

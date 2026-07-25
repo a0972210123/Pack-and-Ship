@@ -193,6 +193,11 @@ sponsor / paid-add-on link only if they opt in) — never add a money link uninv
 - **`track.mjs` only reads the tracker at the repo root.** If it has been moved,
   the script writes a blank one and the recorded launch status is gone. It warns
   when it starts from scratch — do not scroll past it.
+- **Run `node assets/check-contrast.mjs <dir|url>` on any page you are about to
+  film, screenshot or ship.** It renders every theme and measures text contrast
+  to WCAG AA. The recurring failure it catches is a rule that sets `background`
+  but not `color` on a button or input: those do not inherit colour, so the
+  control looks right in one theme and vanishes in the other.
 - **Read `references/demo-composition.md` before generating or judging any demo
   asset** — for a skill, a site or an app. Safe areas, giving captions reserved
   space instead of floating them over the product, why that space must come from

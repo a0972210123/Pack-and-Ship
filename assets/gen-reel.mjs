@@ -119,7 +119,16 @@ const TIMING = n => {
   const beats = Math.max(1, n - 3);
   const beat0 = 7000, gap = 2200;
   const endAt = beat0 + gap * beats + 200;
-  return { hook0: 250, hook1: 2100, hook2: 3900, tourAt: 5600, beat0, gap, darkOn: 3, endAt, runMs: endAt + 2800 };
+  const B = R.beats || {};
+  // Which beat flips the theme, and which one runs the colour-vision check.
+  // Point cvdOn at whichever line claims accessibility — a reel that says
+  // "colour-blind safe" while nothing on screen changes is asserting, not showing.
+  return {
+    hook0: 250, hook1: 2100, hook2: 3900, tourAt: 5600, beat0, gap, endAt,
+    darkOn: B.darkOn === undefined ? 3 : B.darkOn,
+    cvdOn: B.cvdOn === undefined ? 4 : B.cvdOn,
+    runMs: endAt + 2800,
+  };
 };
 
 async function record(v) {
@@ -171,8 +180,10 @@ async function record(v) {
     for (let i = 3; i < c.length; i++) {
       const at = t.beat0 + t.gap * (i - 3);
       S(at, () => {
+        const beat = i - 3;
         if (i > 3) next();
-        if (i - 3 === t.darkOn) dark();
+        if (beat === t.darkOn) dark();
+        if (window.__setCvd) window.__setCvd(beat === t.cvdOn);
         show(c[i]);
       });
     }

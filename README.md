@@ -42,6 +42,7 @@ node assets/gen-video.mjs       <dir>   # 16:9 demo video (mp4 + gif)
 node assets/gen-reel.mjs        <dir>   # 9:16 reels, one per language/hook (--only <id> for one)
 node assets/gen-carousel.mjs    <dir>   # LinkedIn/IG carousel (1080×1350) cover→features→CTA
 node assets/gen-thumbnail.mjs   <dir>   # YouTube thumbnail 16:9
+node assets/check-contrast.mjs  <dir>   # WCAG AA audit of every theme (exit 1 on fail)
 ```
 
 Launch posts are written from [`references/posts.md`](references/posts.md) (a playbook,
