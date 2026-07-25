@@ -136,7 +136,23 @@ ffmpeg for video) generates them from the same `ship.config.json` → `assets` b
   before writing timestamps — never assume the length.
 - `node assets/gen-reel.mjs <dir>` — **9:16 short-form reels**, one per language/hook
   variant (ask which languages — English-primary; add others like 繁中 / 日本語 on
-  request, and confirm non-English caption copy before shipping it).
+  request, and confirm non-English caption copy before shipping it). Iterate with
+  **`--only <variantId>`**: each variant is real-time recording, so re-rendering the
+  set to look at one composition change wastes minutes per look.
+  **Ask the tone before recording, the same way you ask orientation and length for a
+  video** — it is set by two numbers in `assets.reel.beats`, and they are what make one
+  reel feel urgent and another considered:
+  - **`gap`** — interval between beats, i.e. the energy. Punchy/hook-driven 1700–1900;
+    **1950 is the verified baseline** (9 captions → 20.8s); explanatory 2200–2500, so a
+    line can be read before it changes.
+  - **`lag`** — how far the caption trails its action (**150ms**). This is what makes a
+    beat read as *action, then label*: the step moves, and the line arrives just behind
+    to name what was already seen to move. A caption that leads or lands with its action
+    loses the causality.
+  Change `gap` alone — the end card and the recording length are both derived from it;
+  never adjust a duration to compensate. The reel composes inside a safe area with a
+  reserved caption band and runs a colour-vision check on `beats.cvdOn`; the reasoning
+  for all of it is in `references/demo-composition.md`.
 - `node assets/gen-carousel.mjs <dir>` — **LinkedIn/Instagram carousel** (1080×1350,
   4:5), one PNG per slide: cover → features → CTA. Falls back to `assets.social` +
   `assets.hero.features` if no explicit `assets.carousel.slides`.
