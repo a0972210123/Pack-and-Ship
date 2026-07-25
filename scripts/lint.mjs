@@ -3,10 +3,13 @@
 // Usage: node scripts/lint.mjs [targetDir=.]
 import fs from 'node:fs';
 import path from 'node:path';
+import { readText } from './text.mjs';
 
 const dir = path.resolve(process.argv[2] || '.');
 const has = p => fs.existsSync(path.join(dir, p));
-const read = p => fs.readFileSync(path.join(dir, p), 'utf8');
+// readText, not readFileSync: a Windows clone (core.autocrlf=true) has CRLF, and
+// the frontmatter checks below are all anchored on \n.
+const read = p => readText(path.join(dir, p));
 
 let fails = 0, warns = 0;
 const ok = (name, cond, detail = '') => {

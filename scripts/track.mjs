@@ -7,10 +7,11 @@
 // set (Polar included only for paid skills).
 import fs from 'node:fs';
 import path from 'node:path';
+import { readText, normalizeText, detectEol } from './text.mjs';
 
 const dir = path.resolve(process.argv[2] || '.');
 const P = p => path.join(dir, p);
-const cfg = fs.existsSync(P('ship.config.json')) ? JSON.parse(fs.readFileSync(P('ship.config.json'), 'utf8')) : {};
+const cfg = fs.existsSync(P('ship.config.json')) ? JSON.parse(readText(P('ship.config.json'))) : {};
 const name = cfg.repo || 'skill';
 const isPaid = Number(cfg.price?.amount) > 0;
 
@@ -21,10 +22,14 @@ const platforms = cfg.launch?.platforms || DEFAULT;
 const HEAD = ['Platform', 'Status', 'Date', 'Link', 'Notes'];
 const file = P('launch-tracker.md');
 
-// parse existing rows (keyed by platform name, lowercased) so edits survive
+// parse existing rows (keyed by platform name, lowercased) so edits survive.
+// Keep the file's own line ending, so re-running on a CRLF checkout doesn't
+// leave it "modified" with an empty diff.
+const prevRaw = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '';
+const eol = detectEol(prevRaw);
 const existing = new Map();
-if (fs.existsSync(file)) {
-  for (const line of fs.readFileSync(file, 'utf8').split('\n')) {
+if (prevRaw) {
+  for (const line of normalizeText(prevRaw).split('\n')) {
     const m = line.match(/^\|(.+)\|\s*$/);
     if (!m) continue;
     const cells = m[1].split('|').map(c => c.trim());
@@ -54,5 +59,5 @@ out.push('| ' + HEAD.join(' | ') + ' |');
 out.push('| ' + HEAD.map(() => '---').join(' | ') + ' |');
 for (const r of rows) out.push('| ' + r.join(' | ') + ' |');
 out.push('');
-fs.writeFileSync(file, out.join('\n'));
+fs.writeFileSync(file, out.join(eol));
 console.log(`✓ launch-tracker.md (${rows.length} platforms${added ? `, +${added} new` : ''})`);

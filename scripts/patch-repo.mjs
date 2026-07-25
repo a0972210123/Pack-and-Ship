@@ -7,11 +7,12 @@
 // (drift guard for CI); without it, files are written in place.
 import fs from 'node:fs';
 import path from 'node:path';
+import { readText, detectEol } from './text.mjs';
 
 const dir = path.resolve(process.argv[2] && !process.argv[2].startsWith('--') ? process.argv[2] : '.');
 const check = process.argv.includes('--check');
 const P = p => path.join(dir, p);
-const cfg = fs.existsSync(P('ship.config.json')) ? JSON.parse(fs.readFileSync(P('ship.config.json'), 'utf8')) : {};
+const cfg = fs.existsSync(P('ship.config.json')) ? JSON.parse(readText(P('ship.config.json'))) : {};
 
 const owner = cfg.owner || '';
 const repo = cfg.repo || '';
@@ -35,8 +36,10 @@ if (fund.openCollective) fLines.push(`open_collective: ${fund.openCollective}`);
 if (customUrls.length) fLines.push(`custom: [${customUrls.map(u => `"${u}"`).join(', ')}]`);
 if (fLines.length) {
   const fPath = P('.github/FUNDING.yml');
-  const next = fLines.join('\n') + '\n';
   const prev = fs.existsSync(fPath) ? fs.readFileSync(fPath, 'utf8') : '';
+  // match the file's own line ending, or --check calls a CRLF checkout stale forever
+  const eol = detectEol(prev);
+  const next = fLines.join(eol) + eol;
   if (prev !== next) {
     note('.github/FUNDING.yml');
     if (!check) { fs.mkdirSync(P('.github'), { recursive: true }); fs.writeFileSync(fPath, next); }
@@ -62,19 +65,22 @@ if (isPaid && checkout) cta.push('', `**[Get ${cfg.repo || 'it'} → ${price.cur
 else if (checkout) cta.push('', `**[♥ Sponsor this project](${checkout})**`);
 cta.push('');
 cta.push(END);
-const block = cta.join('\n');
 
 const rPath = P('README.md');
 if (fs.existsSync(rPath)) {
   let readme = fs.readFileSync(rPath, 'utf8');
+  // build the block in the README's own line ending so a CRLF checkout isn't
+  // rewritten wholesale (and doesn't read as permanently stale under --check)
+  const eol = detectEol(readme);
+  const block = cta.join(eol);
   let next;
   if (readme.includes(START) && readme.includes(END)) {
-    next = readme.replace(new RegExp(START.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '[\\s\\S]*?' + END.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')), block);
+    next = readme.replace(new RegExp(START.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '[\\s\\S]*?' + END.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')), () => block);
   } else {
     // insert right after the first H1 (or at top if none)
     const m = readme.match(/^#\s.*$/m);
-    if (m) { const i = readme.indexOf(m[0]) + m[0].length; next = readme.slice(0, i) + '\n\n' + block + '\n' + readme.slice(i); }
-    else next = block + '\n\n' + readme;
+    if (m) { const i = readme.indexOf(m[0]) + m[0].length; next = readme.slice(0, i) + eol + eol + block + eol + readme.slice(i); }
+    else next = block + eol + eol + readme;
   }
   if (next !== readme) {
     note('README.md badge/CTA block');

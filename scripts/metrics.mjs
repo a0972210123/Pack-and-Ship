@@ -15,11 +15,12 @@
 // reporting agent would feed in: { column: value }.
 import fs from 'node:fs';
 import path from 'node:path';
+import { readText, normalizeText, detectEol } from './text.mjs';
 
 const argv = process.argv.slice(2);
 const dir = path.resolve(argv.find(a => !a.startsWith('--')) || '.');
 const P = p => path.join(dir, p);
-const cfg = fs.existsSync(P('ship.config.json')) ? JSON.parse(fs.readFileSync(P('ship.config.json'), 'utf8')) : {};
+const cfg = fs.existsSync(P('ship.config.json')) ? JSON.parse(readText(P('ship.config.json'))) : {};
 const owner = cfg.owner, repo = cfg.repo;
 const isPaid = Number(cfg.price?.amount) > 0 || !!cfg.price?.checkoutUrl || !!cfg.funding?.polar;
 
@@ -38,7 +39,7 @@ function listings() {
   const f = P('launch-tracker.md');
   if (!fs.existsSync(f)) return '';
   let live = 0, total = 0;
-  for (const line of fs.readFileSync(f, 'utf8').split('\n')) {
+  for (const line of readText(f).split('\n')) {
     const m = line.match(/^\|(.+)\|\s*$/); if (!m) continue;
     const cells = m[1].split('|').map(c => c.trim());
     if (cells.length < 5) continue;
@@ -68,8 +69,10 @@ const fresh = { ...auto, ...overrides };                 // --set wins over auto
 // ── read existing rows (append-only time series, keyed by date) ──
 const file = P('results-tracker.md');
 const rows = new Map();  // date -> { col: val }
-if (fs.existsSync(file)) {
-  for (const line of fs.readFileSync(file, 'utf8').split('\n')) {
+const prevRaw = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '';
+const eol = detectEol(prevRaw);   // keep the file's own line ending (see track.mjs)
+if (prevRaw) {
+  for (const line of normalizeText(prevRaw).split('\n')) {
     const m = line.match(/^\|(.+)\|\s*$/); if (!m) continue;
     const cells = m[1].split('|').map(c => c.trim());
     if (cells[0] === 'Date' || /^-+$/.test((cells[0] || '-').replace(/[:\s]/g, '') || '-')) continue;
@@ -95,7 +98,7 @@ out.push('| ' + HEAD.join(' | ') + ' |');
 out.push('| ' + HEAD.map(() => '---').join(' | ') + ' |');
 for (const d of sorted) out.push('| ' + [d, ...cols.map(c => rows.get(d)[c] || '')].join(' | ') + ' |');
 out.push('');
-fs.writeFileSync(file, out.join('\n'));
+fs.writeFileSync(file, out.join(eol));
 
 const gotGh = '⭐ Stars' in gh;
 console.log(`✓ results-tracker.md — ${today} row ${prev && Object.keys(prev).length ? 'updated' : 'added'} (${sorted.length} snapshot${sorted.length > 1 ? 's' : ''})`);

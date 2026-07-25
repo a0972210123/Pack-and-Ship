@@ -7,10 +7,11 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { sanitize } from './sanitize.mjs';
 import { createZip } from './zip.mjs';
+import { readText } from './text.mjs';
 
 const dir = path.resolve(process.argv[2] || '.');
 const P = p => path.join(dir, p);
-const read = p => fs.readFileSync(P(p), 'utf8');
+const read = p => readText(P(p));
 const exists = p => fs.existsSync(P(p));
 
 // ── locate SKILL.md (root or one deep) ──
