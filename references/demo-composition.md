@@ -85,6 +85,37 @@ decides whether there is a second one, and a still frame there is a scroll.
   it is pointing at. Hook hard for a second, then let the demo breathe — the
   tour beats use a plain fade on purpose.
 
+## Pacing is two dials, and they set the tone
+
+Everything about rhythm lives in `TIMING` in `gen-reel.mjs`, overridable per
+project as `assets.reel.beats`. Two numbers decide how a reel feels:
+
+| Dial | What it controls | Current |
+|---|---|---|
+| `gap` | Interval between beats — the energy. Shorter is urgent and holds attention; longer is easier to read and more composed. | 1950ms |
+| `lag` | How far the caption trails its action — the sense of cause and effect. | 150ms |
+| `beat0` | Where the first beat sits. Must clear the tour's 350ms entrance, or beat one breaks the rhythm every other beat keeps. | 6000ms |
+
+**`lag` matters more than its size suggests.** It is what makes a beat read as
+*action, then label*: the step advances, and the caption arrives just behind to
+name what you have already seen move. A caption that leads its action, or lands
+with it, loses the causality and reads as two things happening at once.
+
+The failure worth remembering is not a wrong number but an inconsistent rule.
+Beat one once trailed its action by 1580ms while every other beat trailed by
+180ms — the opening spotlight sat lit for over a second with nothing naming it.
+Each beat individually looked defensible; only the comparison showed the break.
+
+Starting points by tone — only 1950/150 has been verified by render, the rest
+are extrapolation:
+
+- **Punchy, hook-driven**: `gap` 1700–1900
+- **Current baseline**: `gap` 1950, `lag` 150 — 9 captions in 20.8s
+- **Explanatory, teaching**: `gap` 2200–2500, so a line can be read before it changes
+
+Change `gap` alone; the end card and the recording length are both derived from
+it. Never adjust a duration to compensate.
+
 ## Derive the timeline from the content, never hard-code it
 
 Beat timings written out by hand drift the moment the copy changes. This is not
