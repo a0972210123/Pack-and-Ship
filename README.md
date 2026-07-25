@@ -39,7 +39,7 @@ visuals a listing converts on, all from the same `ship.config.json`:
 node assets/gen-images.mjs      <dir>   # social preview 1280×640 + hero 16:9
 node assets/gen-screenshots.mjs <dir>   # up to 12 shots, spread over desktop/mobile × light/dark
 node assets/gen-video.mjs       <dir>   # 16:9 demo video (mp4 + gif)
-node assets/gen-reel.mjs        <dir>   # 9:16 short-form reels, one per language/hook
+node assets/gen-reel.mjs        <dir>   # 9:16 reels, one per language/hook (--only <id> for one)
 node assets/gen-carousel.mjs    <dir>   # LinkedIn/IG carousel (1080×1350) cover→features→CTA
 node assets/gen-thumbnail.mjs   <dir>   # YouTube thumbnail 16:9
 ```
@@ -57,6 +57,15 @@ See [`references/listing-template.md`](references/listing-template.md).
 
 [`references/platforms.md`](references/platforms.md) — the field spec and gotchas for
 each marketplace, distilled from real submissions.
+
+[`references/repo-hygiene.md`](references/repo-hygiene.md) — what ships and what stays
+private, and the quiet failures that teach it: marketing material going public with the
+product, `.gitignore` not protecting a package, a tracker silently losing its history.
+
+## Planned
+
+[`ROADMAP.md`](ROADMAP.md) — brand-colour tokens, and a mascot stage in the corner of
+the reel composition.
 
 ## Requirements
 

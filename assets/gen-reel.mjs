@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 // Record 9:16 short-form marketing reels (one per language/hook variant) by
 // overlaying a caption timeline on the demo page and driving its tour. → mp4s.
-// Usage: node assets/gen-reel.mjs [targetDir=.]
+// Usage: node assets/gen-reel.mjs [targetDir=.] [--only <variantId>]
+//   --only records a single variant — worth using while iterating on the
+//   composition, since each one costs ~25s of real-time recording.
 // Needs ffmpeg. Config: assets.reel.variants = [{ id, lang, captions:[9 strings], endTag }]
 //   captions index: 0-2 = hook (before the tour), 3-8 = over the 6 tour beats.
 // The reel is composed inside a safe area and the remainder becomes a border, so
@@ -16,7 +18,15 @@ import { fileURLToPath } from 'node:url';
 import { launch, serve, findFfmpeg, webmToMp4, safeFrame, VERTICAL_SAFE_AREA } from './lib/render.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const dir = path.resolve(process.argv[2] || '.');
+const argv = process.argv.slice(2);
+const positional = [];
+let only = null;
+for (let i = 0; i < argv.length; i++) {
+  if (argv[i] === '--only') { only = argv[++i]; continue; }
+  if (argv[i].startsWith('--only=')) { only = argv[i].slice('--only='.length); continue; }
+  positional.push(argv[i]);
+}
+const dir = path.resolve(positional[0] || '.');
 const cfg = fs.existsSync(path.join(dir, 'ship.config.json')) ? JSON.parse(fs.readFileSync(path.join(dir, 'ship.config.json'), 'utf8')) : {};
 const A = cfg.assets || {};
 const brand = A.brand || {};
@@ -27,7 +37,12 @@ const DEF = [
     `One command reads your UI…`, `…and builds a <span class="p">guided tour</span>`, `step by step`, `dark mode · any language 🌍`, `accessible · <b>colorblind-safe</b> ♿`, `and <b>verified</b> ✓`],
     endTag: 'One command, done.' },
 ];
-const variants = (A.reel && A.reel.variants) || DEF;
+const allVariants = (A.reel && A.reel.variants) || DEF;
+const variants = only ? allVariants.filter(v => v.id === only) : allVariants;
+if (only && !variants.length) {
+  console.error(`! no reel variant with id "${only}" — have: ${allVariants.map(v => v.id).join(', ')}`);
+  process.exit(1);
+}
 const out = path.join(dir, 'dist', 'assets');
 fs.mkdirSync(out, { recursive: true });
 const ff = findFfmpeg();
