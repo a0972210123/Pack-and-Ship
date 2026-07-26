@@ -3,24 +3,36 @@
 Planned work, with enough context to pick each item up cold. Nothing here is
 started — an item moves out of this file when it ships.
 
-## Brand colours need redefining
+## Brand colour keys are named after hues, not roles
 
-`assets.brand` in each skill's `ship.config.json` currently carries a palette
-that grew ad hoc — `accent`, `accentDark`, `gold`, `goldDark` — and the asset
-generators reach for those keys directly. Toutour's purple is a placeholder, not
-a decision.
+**Settled, so no longer blocked:** three identities, deliberately not one.
 
-Blocked on the brand identity itself being settled. When it is:
+| Identity | Palette |
+|---|---|
+| **mattye.dev** — the personal site | Independent. Academic indigo + cyan; it is the source. |
+| **Toutour** — the product | Follows mattye.dev. |
+| **Tela Aurea Lab** — the mascot and its world | Independent. See below. |
 
-- Decide the token set before touching code. The current names describe hues
-  rather than roles, which is why `gen-reel.mjs` had to invent a `bgDark`
-  fallback that no config actually defines.
-- Give every generator the same defaults from one place. Today each one falls
-  back on its own literal, so an unset key produces a different colour depending
-  on which asset you generated.
-- Reel frame colour and border currently default to `brand.bgDark` and
-  `brand.accent`. Whatever replaces them should keep working without per-project
-  config — the point of the defaults is that a new skill looks right immediately.
+Toutour now carries the indigo palette, and the reel derives every colour from
+it. What is left is cosmetic but misleading: the keys are `accent`, `accentDark`,
+`gold`, `goldDark`, and `gold` currently holds a cyan. They are roles —
+primary, deeper, secondary highlight — and should be named that way. Renaming
+touches every generator plus each `ship.config.json`, so it wants doing in one
+pass rather than opportunistically.
+
+Also worth folding in: the four fallbacks live in `gen-reel.mjs`. The other
+generators pass `brand.*` straight to their templates, so an unset key lands on
+whatever that template defaults to. One shared set of defaults would make an
+incomplete brand block behave the same everywhere.
+
+### Published assets are not repainted
+
+A palette change applies to **new** assets only. Anything already listed —
+README badges, the social preview on GitHub, the Polar product image, the
+screenshots on each marketplace, the published reels — stays as it is. Re-cutting
+live listings to chase a colour costs review cycles and buys nothing, and the
+engine's own `--tt-accent` default is product behaviour rather than marketing:
+changing it repaints the tour for everyone who has already installed the skill.
 
 ## A mascot stage in the corner of the video
 
@@ -49,5 +61,19 @@ Depends on the character existing. See below.
 ## The character itself
 
 A cartoon mascot derived from the Tela Aurea Lab logo — a pangolin/lion hybrid.
-**Still in discussion; do not start production.** Direction, references and the
-production route are being worked out with the owner first.
+**Still in discussion; do not start production.**
+
+Direction agreed so far:
+
+- **Its own identity.** The mascot does not take the product palette. Tela Aurea
+  Lab is a separate brand from mattye.dev and from Toutour.
+- **Starts white**, drawn in grayscale and line — form and linework carry it, not
+  colour. It can take colour later depending on the setting it appears in, which
+  means the artwork has to be built so colour is applied rather than baked in.
+- Reading in grayscale is therefore the design constraint, not an afterthought —
+  conveniently the same test the reel's colour-vision check already applies.
+
+Open: the fusion balance (more armoured pangolin or more maned lion), personality,
+whether it speaks, and the production route. A useful thread from the logo: its
+tessellated diamonds already read as pangolin scales and its radial rings as a
+mane, so a curled-up pose could resolve back into the logo itself.
