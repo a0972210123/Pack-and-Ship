@@ -138,6 +138,16 @@ The real constraint is legibility at the size people actually see. A caption tha
 reads on a monitor can be mush in a feed on a phone. Judge it from an extracted
 frame viewed small, not from the editor.
 
+**Check every language, not just the one you composed in.** The same font size
+buys far fewer characters in Latin script than in CJK, so a band tuned on Chinese
+copy clips the English. Worse, it does not wrap: a flex item defaults to
+`min-width: auto` and refuses to shrink below its content, so the line runs
+straight past the edges and gets cut. `min-width: 0` on the text element is what
+lets it wrap at all — and a scale-up entrance animation grows from the centre, so
+keep the overshoot under about 1.07 or a full line clips at the peak. Belt and
+braces: measure after setting the text and step the size down if it still
+outgrows its box.
+
 ## Record at the size you compose for
 
 Do not record full-bleed and scale into the safe box afterwards — the aspect

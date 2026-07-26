@@ -91,16 +91,22 @@ const MASK_DIR = capPos === 'top' ? '180deg' : '0deg';
 // touching how fixed elements resolve, so measurement and mask still agree.
 const OVERLAY_CSS = `${capShift ? `body{padding-top:${capShift}px!important;box-sizing:border-box}` : ''}
 #rcap{position:fixed;${capPos}:0;left:0;right:0;height:${capH}px;box-sizing:border-box;padding:0 5.6vw;display:flex;align-items:center;justify-content:center;text-align:center;z-index:99500;background:linear-gradient(${MASK_DIR},${MASK} 0%,${MASK} 84%,transparent 100%);pointer-events:none}
-#rcap h2{color:${CAPTXT};font:850 7.4vw/1.12 system-ui,sans-serif;letter-spacing:-.01em;opacity:0;transform:translateY(12px);transition:opacity .35s,transform .35s;text-shadow:${CAPSHADOW};margin:0}
+/* min-width:0 is what lets this wrap. A flex item defaults to min-width:auto,
+   which refuses to shrink below its content, so a long line does not wrap — it
+   overflows the band and gets clipped at both edges. Latin copy hits this where
+   CJK does not: the same font size buys far fewer characters per line. */
+#rcap h2{min-width:0;max-width:100%;color:${CAPTXT};font:850 7.4vw/1.12 system-ui,sans-serif;letter-spacing:-.01em;opacity:0;transform:translateY(12px);transition:opacity .35s,transform .35s;text-shadow:${CAPSHADOW};margin:0}
 #rcap.show h2{opacity:1;transform:none}#rcap h2 b{color:${capLight ? '#b45309' : '#fbbf24'}}#rcap h2 .p{color:${capLight ? '#6d28d9' : '#c4b5fd'}}
 /* A feed is scrolled past, not watched. The first second has to move, so the band
    drops in and the hook lines pop and cut rather than fading politely. Once the
    tour starts the motion stops — the product is the thing to look at by then, and
    type that keeps dancing over it competes with what it is pointing at. */
 @keyframes rband{from{transform:translateY(${capPos === 'top' ? '-105%' : '105%'})}to{transform:none}}
+/* Overshoot stays under 1.07: the scale grows from the centre, so a line that
+   fills the band would push past the padding at the peak and clip. */
 @keyframes rpop{0%{opacity:0;transform:scale(.5) translateY(14px) rotate(-5deg)}
-40%{opacity:1;transform:scale(1.10) translateY(0) rotate(2deg)}
-56%{transform:scale(.95) rotate(-2.5deg)}70%{transform:scale(1.03) rotate(1.4deg)}
+40%{opacity:1;transform:scale(1.06) translateY(0) rotate(2deg)}
+56%{transform:scale(.96) rotate(-2.5deg)}70%{transform:scale(1.02) rotate(1.4deg)}
 84%{transform:scale(.99) rotate(-.6deg)}100%{opacity:1;transform:none}}
 @keyframes rcut{0%{opacity:0;transform:translateX(var(--from)) skewX(var(--skew)) scale(.94)}
 70%{opacity:1;transform:translateX(0) skewX(0) scale(1.04)}100%{opacity:1;transform:none}}
@@ -168,6 +174,14 @@ async function record(v) {
       setTimeout(() => {
         T.innerHTML = h;
         T.className = kind || '';
+        // Wrapping handles a long line; an exceptionally long one would still
+        // outgrow the band, so step the size down until it fits. Cheap insurance
+        // that keeps the band safe for copy in any language.
+        T.style.fontSize = '';
+        let px = parseFloat(getComputedStyle(T).fontSize), guard = 20;
+        while (T.scrollHeight > cap.clientHeight - 8 && px > 10 && guard--) {
+          px *= 0.94; T.style.fontSize = px + 'px';
+        }
         void T.offsetWidth;             // restart the animation for the new line
         cap.classList.add('show');
       }, t.lag);
