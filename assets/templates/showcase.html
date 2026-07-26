@@ -88,18 +88,21 @@
 </style>
 <style>
   :root{--bg:#f6f7fb;--surface:#fff;--text:#111827;--muted:#6b7280;--accent:#7c3aed;--accent-bg:#ede9fe;--border:#e8e9ef;--radius:14px;
-        --on-accent:#fff;--pos:#15803d;--neg:#b91c1c;
+        --accent-d:#5b21b6;--on-accent:#fff;--pos:#15803d;--neg:#b91c1c;
         --tt-surface:var(--surface);--tt-text:var(--text);--tt-muted:var(--muted);--tt-accent:var(--accent);--tt-accent-bg:var(--accent-bg);--tt-border:var(--border);--tt-radius:14px}
   /* Dark is not the same palette dimmed. The accent gets lighter, so text on it
      has to get darker; status colours have to lighten to clear the surface. */
   :root[data-theme=dark]{--bg:#0c0c11;--surface:#16161d;--text:#f4f4f7;--muted:#9ca3af;--accent:#a78bfa;--accent-bg:#241d47;--border:#26262f;
-        --on-accent:#1a1030;--pos:#4ade80;--neg:#fca5a5}
+        --accent-d:#7c3aed;--on-accent:#1a1030;--pos:#4ade80;--neg:#fca5a5}
+  /* Tints derive from the accent so a brand override repaints them too. A literal
+     here is how a "purple" tint survives a switch to blue and nobody notices. */
+  :root{--accent-bg:color-mix(in srgb, var(--accent) 15%, var(--surface))}
   *{box-sizing:border-box;margin:0;padding:0}
   body{font:15px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
   .app{display:grid;grid-template-columns:210px 1fr;min-height:100vh}
   .side{background:var(--surface);border-right:1px solid var(--border);padding:1.1rem .8rem;display:flex;flex-direction:column;gap:.3rem}
   .brand{display:flex;align-items:center;gap:.5rem;font-weight:800;font-size:1.05rem;margin:.2rem .4rem 1.2rem}
-  .brand .dot{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,#a78bfa,#7c3aed);display:grid;place-items:center;color:#fff;font-size:.9rem}
+  .brand .dot{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent-d));display:grid;place-items:center;color:#fff;font-size:.9rem}
   .nav{display:flex;align-items:center;gap:.6rem;padding:.55rem .7rem;border-radius:10px;color:var(--muted);cursor:pointer;font-weight:500}
   .nav.active{background:var(--accent-bg);color:var(--accent);font-weight:700}
   .main{padding:1.4rem 1.8rem}
@@ -119,7 +122,7 @@
   .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;margin-bottom:1.2rem}
   .panel h3{font-size:.95rem;font-weight:800;margin-bottom:.2rem}.panel .sub{color:var(--muted);font-size:.82rem;margin-bottom:1rem}
   .bars{display:flex;align-items:flex-end;gap:10px;height:150px;padding-top:.4rem}
-  .bar{flex:1;background:linear-gradient(180deg,#a78bfa,#7c3aed);border-radius:7px 7px 0 0;opacity:.9}
+  .bar{flex:1;background:linear-gradient(180deg,var(--accent),var(--accent-d));border-radius:7px 7px 0 0;opacity:.9}
   .filters{display:flex;gap:.5rem;margin-bottom:1rem;align-items:center}
   .chip{border:1px solid var(--border);background:var(--surface);color:var(--muted);padding:.35rem .8rem;border-radius:999px;font-size:.8rem;font-weight:600;cursor:pointer}
   .chip.on{background:var(--accent-bg);color:var(--accent);border-color:var(--accent)}
@@ -397,6 +400,9 @@
   // brand overrides from window.__CFG.brand (accent) if provided
   (function(){ var b=(window.__CFG&&window.__CFG.brand)||{}; var r=document.documentElement.style;
     if(b.accent) r.setProperty('--accent', b.accent);
+    if(b.accentDark) r.setProperty('--accent-d', b.accentDark);
+    /* --pos/--neg stay put: they mean up and down, not brand. Repointing them at
+       a brand colour loses the meaning and drops them out of AA on one surface. */
     if(b.name){document.getElementById('bname').textContent=b.name;} if(b.emoji){document.getElementById('bdot').textContent=b.emoji;} })();
   document.getElementById('bars').innerHTML=[40,62,55,78,70,90,66].map(function(h){return '<div class=bar style=height:'+h+'%></div>';}).join('');
   var themeBtn=document.getElementById('themeBtn');

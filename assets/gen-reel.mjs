@@ -18,7 +18,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { launch, serve, findFfmpeg, webmToMp4, safeFrame, VERTICAL_SAFE_AREA } from './lib/render.mjs';
+import { launch, serve, findFfmpeg, webmToMp4, safeFrame, VERTICAL_SAFE_AREA, pageWithCfg } from './lib/render.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const argv = process.argv.slice(2);
@@ -55,9 +55,17 @@ const ff = findFfmpeg();
 // (fractions), .background and .border.
 const OUT = { w: 1080, h: 1920 };
 const R = A.reel || {};
+// Every colour below derives from these four, so repointing the brand actually
+// repaints the reel. They used to be literals scattered through the stylesheet,
+// which meant a palette change moved the frame and left the end card behind.
+const BG = R.background || brand.bgDark || '#0b0b10';
+const AC = brand.accent || '#a78bfa';           // primary
+const ACD = brand.accentDark || '#7c3aed';      // deeper, for gradients
+const HI = brand.gold || '#fbbf24';             // secondary highlight in captions
+const mix = (c, pct, into) => `color-mix(in srgb, ${c} ${pct}%, ${into})`;
 const FRAME = safeFrame(OUT.w, OUT.h, R.safeArea || VERTICAL_SAFE_AREA, {
-  background: R.background || brand.bgDark || '#0b0b10',
-  border: R.border || { width: 3, color: brand.accent || '#a78bfa' },
+  background: BG,
+  border: R.border || { width: 3, color: AC },
 });
 // Record at half the visible box and let ffmpeg scale up — same trick as before,
 // just sized to the frame instead of the whole canvas, so nothing is squashed.
@@ -96,7 +104,9 @@ const OVERLAY_CSS = `${capShift ? `body{padding-top:${capShift}px!important;box-
    overflows the band and gets clipped at both edges. Latin copy hits this where
    CJK does not: the same font size buys far fewer characters per line. */
 #rcap h2{min-width:0;max-width:100%;color:${CAPTXT};font:850 7.4vw/1.12 system-ui,sans-serif;letter-spacing:-.01em;opacity:0;transform:translateY(12px);transition:opacity .35s,transform .35s;text-shadow:${CAPSHADOW};margin:0}
-#rcap.show h2{opacity:1;transform:none}#rcap h2 b{color:${capLight ? '#b45309' : '#fbbf24'}}#rcap h2 .p{color:${capLight ? '#6d28d9' : '#c4b5fd'}}
+#rcap.show h2{opacity:1;transform:none}
+#rcap h2 b{color:${capLight ? mix(HI, 62, '#000') : HI}}
+#rcap h2 .p{color:${capLight ? mix(ACD, 78, '#000') : mix(AC, 72, '#fff')}}
 /* A feed is scrolled past, not watched. The first second has to move, so the band
    drops in and the hook lines pop and cut rather than fading politely. Once the
    tour starts the motion stops — the product is the thing to look at by then, and
@@ -114,10 +124,10 @@ const OVERLAY_CSS = `${capShift ? `body{padding-top:${capShift}px!important;box-
 #rcap.show h2.pop{animation:rpop .95s cubic-bezier(.2,1.4,.3,1) both}
 #rcap.show h2.cutl{--from:-17vw;--skew:-7deg;animation:rcut .42s cubic-bezier(.2,1.25,.3,1) both}
 #rcap.show h2.cutr{--from:17vw;--skew:7deg;animation:rcut .42s cubic-bezier(.2,1.25,.3,1) both}
-#rend{position:fixed;inset:0;z-index:99700;background:radial-gradient(120% 120% at 50% 30%,#2b2350,#0b0b10 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3.3vw;opacity:0;transition:opacity .5s;pointer-events:none;font-family:system-ui,sans-serif}
-#rend.show{opacity:1}#rend .lg{width:17.8vw;height:17.8vw;border-radius:4.8vw;background:linear-gradient(135deg,#a78bfa,#7c3aed);display:grid;place-items:center;font-size:8.9vw;color:#fff}
-#rend h1{color:#fff;font-size:9.3vw;font-weight:850;margin:0}#rend .tag{color:#c4b5fd;font-size:4.3vw;font-weight:700}
-#rend .cmd{margin-top:1.5vw;background:#0f0f14;border:1px solid #2a2a33;color:#c4b5fd;font-family:ui-monospace,Menlo,monospace;font-size:3.5vw;font-weight:700;padding:2.6vw 3.7vw;border-radius:2.6vw}`;
+#rend{position:fixed;inset:0;z-index:99700;background:radial-gradient(120% 120% at 50% 30%,${mix(ACD, 34, BG)},${BG} 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3.3vw;opacity:0;transition:opacity .5s;pointer-events:none;font-family:system-ui,sans-serif}
+#rend.show{opacity:1}#rend .lg{width:17.8vw;height:17.8vw;border-radius:4.8vw;background:linear-gradient(135deg,${AC},${ACD});display:grid;place-items:center;font-size:8.9vw;color:#fff}
+#rend h1{color:#fff;font-size:9.3vw;font-weight:850;margin:0}#rend .tag{color:${mix(AC, 72, '#fff')};font-size:4.3vw;font-weight:700}
+#rend .cmd{margin-top:1.5vw;background:${mix(BG, 78, '#000')};border:1px solid ${mix(AC, 26, BG)};color:${mix(AC, 76, '#fff')};font-family:ui-monospace,Menlo,monospace;font-size:3.5vw;font-weight:700;padding:2.6vw 3.7vw;border-radius:2.6vw}`;
 
 // One place the timeline is decided, so the caption count, the number of tour
 // steps advanced, and how long we keep recording can never disagree.
@@ -154,8 +164,14 @@ async function record(v) {
   fs.rmSync(raw, { recursive: true, force: true });
   const recStart = Date.now();
   const ctx = await browser.newContext({ viewport: SHOT, deviceScaleFactor: 2, recordVideo: { dir: raw, size: SHOT } });
-  const page = await ctx.newPage();
-  await page.goto(url); await page.waitForTimeout(600);
+  // Hand the demo page the palette before it renders. Without this the frame and
+  // captions follow the brand while the product inside them stays whatever colour
+  // the template shipped with — a blue border around a purple dashboard.
+  // Colours only, deliberately: the reel's story is "*your* app has 40 features",
+  // so the demo has to read as the viewer's product. Passing name and emoji too
+  // relabels the dashboard as the skill, which owns no dashboard.
+  const page = await pageWithCfg(ctx, url, { brand: { accent: AC, accentDark: ACD } });
+  await page.waitForTimeout(600);
   await page.addStyleTag({ content: OVERLAY_CSS });
   // Everything up to here is a still frame in the recording. Keep a short beat of
   // the product before the first line lands, and cut the rest off the front.
