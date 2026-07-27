@@ -6,3 +6,8 @@ node_modules/
 # Installing them leaves these behind; the shipped skill stays dependency-free.
 package.json
 package-lock.json
+
+# Tela Aurea Lab brand work lives in the private Skill-Publishing-Assets repo.
+# It is a separate identity, it is unreleased, and references/ is not excluded
+# from the default package — anything left here ships to every installer.
+references/mascot/
