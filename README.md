@@ -46,7 +46,9 @@ node assets/check-contrast.mjs  <dir>   # WCAG AA audit of every theme (exit 1 o
 ```
 
 Launch posts are written from [`references/posts.md`](references/posts.md) (a playbook,
-English-primary, ask the language).
+English-primary, ask the language), against the strategy in
+[`references/copy-strategy.md`](references/copy-strategy.md) — what feeds, marketplaces and
+repos each reward, and the claims that never ship whatever they convert.
 
 ## Config (optional)
 

@@ -187,6 +187,11 @@ downloadable file on mobile**. So when assets are ready to ship:
 
 ## Optional — write launch posts
 
+Read **`references/copy-strategy.md`** first. It sets out what each surface
+rewards — feeds, marketplaces and repos put the reader in three different states
+of mind, and copy that lands in one is wrong in another — and it carries the
+honesty line below.
+
 When asked, write platform-tailored launch posts following `references/posts.md`
 (X, LinkedIn, Instagram, Facebook, Threads, Reddit, Product Hunt, and the **YouTube
 video-description box**). Ask which languages (default English-primary). This is a playbook
@@ -197,6 +202,20 @@ sponsor / paid-add-on link only if they opt in) — never add a money link uninv
 
 ## Notes
 
+- **Never write a claim the skill cannot back.** Attention techniques are for
+  making real value clear, not for inventing it. No overstating what it does, no
+  manufactured scarcity or urgency, no borrowed credibility, and **no number in
+  copy without a traceable source** — if it cannot be traced, write a different
+  sentence rather than a softer number. The owner's professional standing is the
+  most durable asset here and it is spent, not lent. `references/copy-strategy.md`
+  has the reasoning; this line is not negotiable per project.
+- **Match the copy to the surface.** A feed reader was not looking for you and
+  needs the problem first; a marketplace reader is mid-search and needs to be
+  found, so withholding what the thing does costs installs. Curiosity gaps belong
+  in one and hurt in the other.
+- **Ship before optimising.** Conversion work assumes traffic. With none yet, the
+  constraint is distribution — post the drafts that exist rather than refine
+  copy nobody has seen, and let `metrics.mjs` say which surface actually leaks.
 - Keep free and paid packages **aligned**: the same zip serves the paid download and
   any registry listing, and a paid add-on should bundle a working SKILL.md (vendor the
   free engine so it runs standalone).
