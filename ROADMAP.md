@@ -60,79 +60,15 @@ Depends on the character existing. See below.
 
 ## The character itself
 
-A cartoon mascot derived from the Tela Aurea Lab logo — a pangolin/lion hybrid.
-**Still in discussion; do not start production.**
+Tela Aurea Lab's mascot, **Telo**, is a separate brand's unreleased identity and
+its specification does not live in this public repo. The character bible, the
+concept rounds and the design handoff are in the private Skill-Publishing-Assets
+repo under `TelaAureaLab/mascot/`.
 
-Direction agreed so far:
+All this roadmap needs to record is the dependency: **the stage above cannot be
+built until the character exists**, and the character is still in appearance
+exploration — age and head-to-body ratio are open questions, not settled ones.
 
-- Its name is **Telo（特羅）**.
-- **Its own identity.** The mascot does not take the product palette. Tela Aurea
-  Lab is a separate brand from mattye.dev and from Toutour.
-- **Starts white**, drawn in grayscale and line — form and linework carry it, not
-  colour. It can take colour later depending on the setting it appears in, which
-  means the artwork has to be built so colour is applied rather than baked in.
-- Reading in grayscale is therefore the design constraint, not an afterthought —
-  conveniently the same test the reel's colour-vision check already applies.
-- **Pangolin structure, lion presence.** It has pangolin armour and can curl, but
-  its flexible mane plates can sway and flare to create the outward, regal read
-  of a lion.
-- It normally stands upright with a kaiju-like body shape and stance, but moves
-  quickly and with agility rather than with heavy giant-monster steps. When
-  lazy, it can hop once, curl into a ball, and roll instead.
-- Its face reads as a feline from the front and a pangolin in profile: a slightly
-  pointed, subtly upturned pangolin snout, with domestic-cat proportions as the
-  current baseline for the nose, brow and cheeks.
-- It has medium-large rounded almond eyes. Pupils are normally enlarged and
-  feline in presence, but remain circular even when constricted rather than
-  becoming vertical slits.
-- Small rounded-triangle ears normally angle slightly upward and outward in a
-  mild "airplane ear" pose; surprise or excitement brings them upright.
-- The nose is small, matte and dark gray; the mouth is a minimal line. Its
-  neutral expression is gently happy, with slightly raised brows and a subtle
-  smile. Larger facial deformation is deliberately left open for later.
-- It reads as an early teenager, roughly **12–15**, with lively curiosity,
-  innocence, generosity and impulsive youthful drive.
-- Its baseline proportion is **4.75 heads tall**, subject to small adjustments
-  during silhouette testing for the younger age read. Its legs are short, thick
-  and powerful without making its movement slow.
-- Each hand and foot has **four digits total**. Fingers and toes end in small,
-  pointed claw-like tips rather than large digging claws.
-- The armour map is asymmetric between protective outer surfaces and expressive
-  soft surfaces:
-  - head scales stop at the forehead in a widow's-peak contour;
-  - cheeks and abdomen are unarmoured;
-  - the mane armour is present but restrained rather than strongly protruding;
-  - each shoulder carries two to three larger pad-like plates;
-  - back armour continues directly from the mane;
-  - legs are half-wrapped, armoured outside and soft on the inner face;
-  - the tail is fully armoured.
-- The plate language uses **softened diamonds / shield shapes**. Mane and
-  shoulder plates stay closest to the logo's diamonds; plates transition toward
-  more natural pangolin teardrops across the back and tail. Corners are rounded
-  with a subtly pointed tip so the armour feels grown rather than manufactured.
-- Plate scale follows a clear rhythm: small at the forehead, largest at the mane
-  and shoulders, medium and regularly overlapped across the back, then tapering
-  smaller along the fully armoured tail.
-- The grayscale hierarchy keeps the character white while separating materials:
-  soft skin is near-white; armour is a slightly cooler, one-step darker
-  gray-white; overlap seams and shadows use mid-gray; eyes, nose and only the
-  necessary outer lines carry the darkest values.
-- The master design is **line- and silhouette-led**, not detail-led. Use a small
-  number of large plate groups and clean contour breaks; avoid individual-scale
-  clutter, surface texture, scratches, hatching and decorative linework. The
-  character must still read when reduced to a simple outline.
-- Its tail starts at **0.8× body length**.
-- Its hands are unarmoured. When it curls, they help preserve the hollow centre
-  visible in the Tela Aurea Lab logo instead of filling the mark with scales.
-- The base character is entirely natural and unclothed, with no permanent
-  accessory. Props and wearable items are scene-specific additions only.
-- All unarmoured regions share one consistent soft-surface material. There is
-  no logo or permanent emblem on the body; brand recognition comes from the
-  armour geometry and the curled transformation pose.
-- It speaks. The voice will eventually contrast a cute high register with a low,
-  resonant one; the switching rule is still open.
-
-The logo remains the transformation target: its tessellated diamonds read as
-pangolin scales, its radial rings as a mane, and the curled pose resolves the
-character back toward the mark. Production remains blocked on a grayscale
-silhouette and appearance study; do not build the reel stage or final rig yet.
+Do not restate the design here. A copy in a public repo goes stale against the
+private source, and this one already had: it stated an age and a proportion as
+decided that the handoff explicitly reopened.
