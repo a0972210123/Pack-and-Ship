@@ -202,6 +202,11 @@ sponsor / paid-add-on link only if they opt in) — never add a money link uninv
 
 ## Notes
 
+- **Generating media beyond `assets/`?** Read `references/generated-media.md` first.
+  The trap is licensing: within one model family some revisions are Apache-2.0 and
+  others are non-commercial, and a marketplace listing is commercial use even when
+  the skill is free. It also covers platform disclosure of synthetic content, and
+  the rule that generated output is a reviewable candidate rather than an asset.
 - **Never write a claim the skill cannot back.** Attention techniques are for
   making real value clear, not for inventing it. No overstating what it does, no
   manufactured scarcity or urgency, no borrowed credibility, and **no number in

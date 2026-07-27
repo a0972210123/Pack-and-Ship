@@ -65,6 +65,10 @@ each marketplace, distilled from real submissions.
 private, and the quiet failures that teach it: marketing material going public with the
 product, `.gitignore` not protecting a package, a tracker silently losing its history.
 
+[`references/generated-media.md`](references/generated-media.md) — reaching outside `assets/`
+for a voice, a music bed or an image: which model revisions are actually licensed for commercial
+use, where platforms require disclosure, and why generated output stays a candidate until approved.
+
 [`references/demo-composition.md`](references/demo-composition.md) — composing a demo of
 any product (skill, site, app) so it survives the platform's own UI: safe areas, reserved
 caption bands, why that space must come from padding rather than a transform, and the
