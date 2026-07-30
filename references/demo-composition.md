@@ -201,6 +201,33 @@ The others are worth knowing too:
 A checker only sees what is rendered, so run it with the interface in its states
 — tour open, modal open, menu expanded — not just at rest.
 
+## SVG is not HTML — do not reach for HTMLElement conveniences
+
+A demo that switches between variants inside an inline SVG will look like it
+works long after it has stopped working. `hidden` is an **HTMLElement** IDL
+property: on an SVG `<g>`, `el.hidden = false` sets a plain JS expando and never
+touches the attribute. CSS `[hidden]` rules and `querySelector(':not([hidden])')`
+read the attribute, so the two disagree silently — no error, no warning.
+
+It stays hidden because the *first* variant still appears to toggle correctly,
+usually because some other rule (`opacity: 0` on the unselected group) is doing
+the real hiding. The bug only surfaces when a third variant is added and refuses
+to appear.
+
+Manipulate the attribute directly inside SVG:
+
+```js
+off ? g.setAttribute('hidden', '') : g.removeAttribute('hidden')
+```
+
+Same caution for any HTML convenience you did not check: SVG elements only
+guarantee the SVGElement interface.
+
+**Verify the switch, not just the render.** Assert which variant is actually
+visible after a programmatic click, in the same automated pass that takes the
+screenshots — otherwise you are reviewing the same frame three times and calling
+it a comparison.
+
 ## Demonstrate the claim, do not assert it
 
 Marketing copy that says "colour-blind safe" over an unchanged screen is an
