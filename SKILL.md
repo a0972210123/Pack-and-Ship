@@ -1,5 +1,6 @@
 ---
 name: pack-and-ship
+version: 1.0.0
 description: Package an agent skill for GitHub and every marketplace in one pass — validate the SKILL.md, build the distributable zip, produce a plain-text-safe copy for guarded uploaders, and generate a ready-to-paste listing sheet with the exact field values for each platform (Agensi, Capafy, explainx.ai, SkillRegistry, Polar, GitHub). Use when the user wants to publish, list, distribute, or ship a skill, or asks to prepare marketplace/upload assets or a release zip for a SKILL.md project.
 ---
 

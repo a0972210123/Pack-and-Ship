@@ -40,6 +40,28 @@ ok('frontmatter name is a lowercase slug', !!name && /^[a-z][a-z0-9-]*$/.test(na
 ok('description 100–1024 chars', !!desc && desc.length >= 100 && desc.length <= 1024, `len=${desc ? desc.length : 0}`);
 ok('description says WHEN to trigger', !!desc && /use when|use this when/i.test(desc));
 
+// version — one declared source of truth, and nothing else disagreeing with it.
+// The version otherwise lives in README prose, CHANGELOG headings and zip
+// filenames, and those drift: a shipped README announced v0.1.0 while the
+// CHANGELOG and the release commit both said v0.1.1.
+const ver = fm && (fm[1].match(/^version:\s*(.+)$/m) || [])[1]?.trim();
+ok('frontmatter has a semver version', !!ver && /^\d+\.\d+\.\d+$/.test(ver), String(ver ?? 'missing'));
+if (ver) {
+  if (has('README.md')) {
+    // vN.N.N mentions that are not the declared version; plain N.N.N without a
+    // leading v is left alone (too many false hits: dep versions, dates)
+    const stray = [...read('README.md').matchAll(/\bv(\d+\.\d+\.\d+)\b/g)].map(m => m[1]).filter(v => v !== ver);
+    warn(`README.md version mentions match frontmatter (${ver})`, stray.length === 0,
+      `also mentions v${[...new Set(stray)].join(', v')}`);
+  }
+  if (has('CHANGELOG.md')) {
+    // only the topmost heading is "current" — the rest of the file is history
+    // and is SUPPOSED to name old versions
+    const top = (read('CHANGELOG.md').match(/^##\s*v?(\d+\.\d+\.\d+)/m) || [])[1];
+    warn(`CHANGELOG.md top entry matches frontmatter (${ver})`, !top || top === ver, `top entry is v${top}`);
+  }
+}
+
 // security self-scan (marketplaces reject these)
 const risky = skill.match(/curl[^`\n]*\|\s*(ba)?sh|wget[^`\n]*\|\s*(ba)?sh|chmod\s+\+x|\bssh\b.*-i|api[_-]?key\s*=\s*['"][^'"]|password\s*=\s*['"][^'"]|secret\s*=\s*['"][^'"]/i);
 ok('no risky imperative patterns (fetch-and-run / secrets)', !risky, risky && risky[0]);
