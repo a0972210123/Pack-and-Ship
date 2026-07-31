@@ -59,6 +59,16 @@ No web upload form — you install its publisher skill and drive it from your ag
 
 ### Gotchas that cost real risk
 
+- **The packager reads the filesystem, not `.gitignore`.** Everything sitting in the skill
+  directory ships, whether or not git tracks it. On the first Toutour run that meant
+  `dist/` (7.1 MB of build output plus three reel videos), `ship.config.json`, and — the
+  one that actually matters — `launch-tracker.md` and `results-tracker.md`, i.e. the
+  private listing progress and the Pro sales figures, all staged for delivery to buyers.
+  The first web confirmation page is skill-level, not file-level, so **there is no way to
+  drop them from the browser**. The fix is upstream: move them out of the source directory,
+  rerun `publish-configure` to re-stage, then move them back. Staging fell from 9.0 MB to
+  2.0 MB. **Always list the staging directory before `publish-ship`** — it is at
+  `<publisher skill>/.temp/staging`, and it is the last place the truth is visible.
 - **`.env` is NOT excluded from the package.** Its exclusion lists for credential
   basenames and name patterns are literally empty; it relies on keyword-based redaction
   of detected secrets instead. A variable whose *name* carries no secret-ish keyword
