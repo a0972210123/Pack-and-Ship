@@ -16,11 +16,32 @@ of being a judgement call made under time pressure.
 
 ```
 <assets-repo>/<Skill>/
-├── copy/         launch posts, per-platform listing copy, channel research
-├── trackers/     launch-tracker.md, results-tracker.md
-├── images/       social cards, thumbnails, packaged zips
-└── video/        demos and reels
+├── shared/       assets reused across launches — brand, screenshots, demo, zips
+├── campaigns/    one folder per launch or series: YYYY-MM-<name>/
+├── copy/         listing copy and channel research (not campaign-specific)
+└── trackers/     launch-tracker.md, results-tracker.md
 ```
+
+**Group by campaign, not by asset type.** The obvious layout is `images/` +
+`video/` + `copy/`, and it is wrong for the work: shipping one launch means
+touching all three, and a launch's assets, copy, links and results end up
+scattered. A campaign folder holds everything for one push, so it can be read
+back later as a case study.
+
+Inside a campaign folder, the extension already separates copy from media —
+`<platform>.md` for posts, descriptive names for `.mp4`/`.jpg`, and a
+`README.md` saying what the campaign was, where it went, and how it did. A
+series (ten episodes of one format) adds one level: `epNN-<slug>/` per episode.
+
+**Reference media across campaigns instead of copying it.** Assets repos rarely
+have Git LFS, so video goes straight into git; the same reel copied into three
+campaign folders is three times the weight.
+
+**Backfill results into the campaign README after publishing.** This is not
+bookkeeping. One skill's first wave had its numbers spread across seven web
+pages; collected into one table, they showed the same video earning 769 on one
+platform and 35 on another — which decided where the second wave went. Nobody
+would have seen that from the posts individually.
 
 ## Three files cannot move, and that is fine
 
