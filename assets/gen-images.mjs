@@ -30,8 +30,8 @@ const heroCfg = {
 
 // Verify layout (no overflow / no text-over-mockup collision) and, when a mock is
 // configured, that the iconified example actually rendered. Returns issue strings.
-async function verifySocial(page, wantsMock) {
-  return page.evaluate((wantsMock) => {
+async function verifySocial(page, wantsMock, wantsTip) {
+  return page.evaluate(({ wantsMock, wantsTip }) => {
     const issues = [];
     const W = 1280, H = 640, vis = el => el && el.getBoundingClientRect();
     const col = vis(document.querySelector('.col'));
@@ -55,14 +55,16 @@ async function verifySocial(page, wantsMock) {
       // the spotlight mask = the lit card's large dark box-shadow spread; assert it's there
       const sh = litEl ? getComputedStyle(litEl).boxShadow : '';
       if (!/rgba?\(0, 0, 0/.test(sh) || !/\b[1-9]\d{2,}px/.test(sh)) issues.push('spotlight mask missing (lit card has no dimming box-shadow spread)');
-      if (!tip || tip.width < 20 || !(tipEl && tipEl.textContent.trim())) issues.push('tour tooltip missing/empty');
-      if (tip && win && (tip.bottom > win.bottom + 1 || tip.right > win.right + 1 || tip.left < win.left - 1)) issues.push('tooltip escapes the window');
+      // Only assert the tooltip when one is configured. It used to be assumed on every
+      // mock, which made a tour product's concept a requirement for everyone else.
+      if (wantsTip && (!tip || tip.width < 20 || !(tipEl && tipEl.textContent.trim()))) issues.push('tour tooltip missing/empty');
+      if (wantsTip && tip && win && (tip.bottom > win.bottom + 1 || tip.right > win.right + 1 || tip.left < win.left - 1)) issues.push('tooltip escapes the window');
       // text column must not collide with the mockup
       const mr = vis(mock);
       if (col && mr && col.right > mr.left + 2) issues.push('text column overlaps the mockup');
     }
     return issues;
-  }, wantsMock);
+  }, { wantsMock, wantsTip });
 }
 
 const browser = await launch();
@@ -73,7 +75,7 @@ let hadDefect = false;
 let page = await pageWithCfg(ctx, `http://localhost:${port}/social-card.html`, socialCfg);
 await page.waitForTimeout(300);
 await page.screenshot({ path: path.join(out, 'social-1280x640.png') });
-const sIssues = await verifySocial(page, !!(socialCfg.mock && (socialCfg.mock.cards || []).length));
+const sIssues = await verifySocial(page, !!(socialCfg.mock && (socialCfg.mock.cards || []).length), !!(socialCfg.mock && socialCfg.mock.tip));
 if (sIssues.length) { hadDefect = true; console.log('✗ social-1280x640.png — layout/iconification issues:'); sIssues.forEach(i => console.log('  · ' + i)); }
 else console.log('✓ dist/assets/social-1280x640.png (layout + iconification verified)');
 

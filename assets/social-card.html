@@ -89,14 +89,19 @@
       .map((n, i) => `<span class="${i === 0 ? 'on' : ''}">${n}</span>`).join('');
     document.getElementById('cards').innerHTML = (m.cards || []).map((cd, i) =>
       `<div class="cd${i === lit ? ' lit' : ''}"><div class="l">${cd.label || ''}</div><div class="v">${cd.value || ''}</div>${cd.delta ? `<div class="d">${cd.delta}</div>` : ''}</div>`).join('');
-    const t = m.tip || {};
-    document.getElementById('tip').innerHTML =
+    // The tooltip is opt-in. It used to render whenever a mock existed, defaulting
+    // to a "✨ 1/6" step counter — one product's tour concept leaking into every
+    // other product's card, with no way to turn it off.
+    const t = m.tip;
+    const tipEl = document.getElementById('tip');
+    if (!t) tipEl.style.display = 'none';
+    else tipEl.innerHTML =
       `<div class="h"><span class="ic">${t.icon || '✨'}</span><span class="ct">${t.counter || '1/6'}</span></div>` +
       `<div class="tx">${t.text || ''}</div>`;
     // anchor the tooltip just below the spotlit card, arrow pointing up at it, clamped inside the window
     requestAnimationFrame(() => {
       const win = document.querySelector('.win'), card = document.querySelectorAll('.cd')[lit], tip = document.getElementById('tip');
-      if (!win || !card) return;
+      if (!win || !card || !t) return;   // a hidden tooltip has zero width; positioning it lands it outside the window and trips the verifier
       const wr = win.getBoundingClientRect(), cr = card.getBoundingClientRect();
       const top = cr.bottom - wr.top + 14;
       let left = cr.left - wr.left;
