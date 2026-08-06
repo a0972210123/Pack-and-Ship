@@ -6,19 +6,19 @@ frontmatter and the git remote. Anything absent is derived or left as a TODO in
 
 ```json
 {
-  "owner": "a0972210123",
+  "owner": "matt-ye",
   "repo": "Toutour",
-  "install": "npx skills add a0972210123/Toutour",
-  "homepage": "https://github.com/a0972210123/Toutour",
+  "install": "npx skills add matt-ye/Toutour",
+  "homepage": "https://github.com/matt-ye/Toutour",
   "summary": "Turn any website into a guided experience — an agent skill that analyzes your UI and generates + Playwright-verifies a spotlight onboarding tour.",
   "category": "Web Development",
   "tags": ["onboarding","product-tour","ux","web-development","accessibility","i18n","playwright","frontend"],
   "demo": {
     "video": "https://youtu.be/FVTpQvh6pBk",
-    "page": "https://a0972210123.github.io/Toutour/"
+    "page": "https://matt-ye.github.io/Toutour/"
   },
   "price": { "amount": 0, "currency": "USD", "checkoutUrl": "" },
-  "funding": { "github": "a0972210123", "polar": "", "custom": [] },
+  "funding": { "github": "matt-ye", "polar": "", "custom": [] },
   "launch": { "platforms": ["GitHub","Agensi","explainx.ai","SkillRegistry","Product Hunt","Show HN"] },
   "metrics": { "columns": ["⭐ Stars","Forks","YT views","Installs","Listings","Pro sales","Notes"] },
   "assets": { "brand": { "…": "generator block — see assets/README.md" } },
